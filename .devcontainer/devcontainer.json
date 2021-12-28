@@ -1,0 +1,58 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.159.0/containers/java
+{
+    "name": "JavaAndNode",
+    "build": {
+      "dockerfile": "Dockerfile",
+      "args": {
+        // Update the VARIANT arg to pick a Java version: 11, 14
+        "VARIANT": "17",
+        // Options
+        "INSTALL_MAVEN": "true",
+        "INSTALL_GRADLE": "false",
+        "INSTALL_NODE": "true",
+        "NODE_VERSION": "lts/*"
+      }
+    },
+  
+    // Set *default* container specific settings.json values on container create.
+    "settings": {
+      "terminal.integrated.shell.linux": "/bin/bash",
+      "java.home": "/docker-java-home",
+      "[typescript]": {
+          "editor.tabSize": 2
+      },
+      "[javascript]": {
+          "editor.tabSize": 2
+      },
+      "indentRainbow.colorOnWhiteSpaceOnly": true,
+      "indentRainbow.colors": [
+          "rgba(255,255,0,0.1)",
+          "rgba(0,255,0,0.1)",
+          "rgba(255,0,255,0.1)",
+          "rgba(79,236,236,0.1)"
+      ],
+      "maven.executable.path": "/usr/local/sdkman/candidates/maven/current/bin/mvn"
+    },
+  
+    // Add the IDs of extensions you want installed when the container is created.
+    "extensions": [
+      "vscjava.vscode-java-pack",
+      "johnsoncodehk.volar",
+      "hollowtree.vue-snippets",
+      "wscats.vue",
+      "octref.vetur",
+      "ms-vscode.vscode-typescript-next",
+      "oderwat.indent-rainbow",
+      "2gua.rainbow-brackets"
+    ],
+  
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [],
+  
+    // Use 'postCreateCommand' to run commands after the container is created.
+    // "postCreateCommand": "java -version",
+  
+    // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
+    "remoteUser": "vscode"
+  }    
