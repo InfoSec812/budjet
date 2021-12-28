@@ -1,0 +1,60 @@
+---
+openapi: 3.0.2
+info:
+  title: My App
+  version: 1.0.0
+  description: My Application
+servers:
+  - url: "http://{domain}:{port}{base_path}"
+    description: "API URL"
+    variables:
+      base_path:
+        enum:
+          - /
+          - /api/v1
+        default: /
+      domain:
+        enum:
+          - localhost
+        default: localhost
+      port:
+        enum:
+          - '7080'
+        default: '7080'
+tags:
+  - name: api
+paths:
+  /health:
+    get:
+      operationId: checkHealth
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          $ref: '#/components/responses/Error'
+components:
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+  schemas:
+    Errors:
+      type: object
+      required:
+        - code
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        msg:
+          type: string
+        code:
+          type: number
+          format: int64

@@ -7,7 +7,40 @@
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
-    "test": "echo \"No test specified\" && exit 0"
+    "test": "echo \"No test specified\" && exit 0",
+    "serve": "quasar dev",
+    "watch": "npm-watch",
+    "prism": "prism mock -d --cors -p 7080 openapi.yml",
+    "openapi": "openapi-generator-cli generate -g typescript-axios -i openapi.yml -o src/sdk/ -p withSeparateModelsAndApi=true,apiPackage=api,modelPackage=models,legacyDiscriminatorBehavior=false"
+  },
+  "watch": {
+    "openapi": {
+      "patterns": [
+        "openapi.yml"
+      ],
+      "runOnChangeOnly": false,
+      "inherit": true,
+      "clearBuffer": true
+    },
+    "prism": {
+      "inherit": true,
+      "patterns": [
+        "openapi"
+      ],
+      "extensions": [
+        "yml"
+      ]
+    },
+    "serve": {
+      "inherit": true,
+      "delay": 4000,
+      "patterns": [
+        "package"
+      ],
+      "extensions": [
+        "json"
+      ]
+    }
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
@@ -16,14 +49,17 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",
+    "@openapitools/openapi-generator-cli": "^2.4.23",
     "@quasar/app": "^3.0.0",
+    "@stoplight/prism-cli": "^4.6.1",
     "@types/node": "^12.20.21",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.16.1",
     "eslint": "^7.14.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-vue": "^7.0.0"
+    "eslint-plugin-vue": "^7.0.0",
+    "npm-watch": "^0.11.0"
   },
   "browserslist": [
     "last 10 Chrome versions",
