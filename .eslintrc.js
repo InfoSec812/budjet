@@ -42,7 +42,7 @@ module.exports = {
     // 'plugin:vue/vue3-strongly-recommended', // Priority B: Strongly Recommended (Improving Readability)
     // 'plugin:vue/vue3-recommended', // Priority C: Recommended (Minimizing Arbitrary Choices and Cognitive Overhead)
 
-    'airbnb-base'
+    // 'airbnb-base'
 
   ],
 
@@ -76,14 +76,14 @@ module.exports = {
     'no-nested-ternary': 'off',
     'max-classes-per-file': 'off',
 
-    'import/first': 'off',
-    'import/namespace': 'error',
-    'import/default': 'error',
-    'import/export': 'error',
-    'import/extensions': 'off',
-    'import/no-unresolved': 'off',
-    'import/no-extraneous-dependencies': 'off',
-    'import/prefer-default-export': 'off',
+    // 'import/first': 'off',
+    // 'import/namespace': 'error',
+    // 'import/default': 'error',
+    // 'import/export': 'error',
+    // 'import/extensions': 'off',
+    // 'import/no-unresolved': 'off',
+    // 'import/no-extraneous-dependencies': 'off',
+    // 'import/prefer-default-export': 'off',
     'prefer-promise-reject-errors': 'off',
 
     // TypeScript
