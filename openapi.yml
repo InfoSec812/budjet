@@ -22,11 +22,13 @@ servers:
           - '7080'
         default: '7080'
 tags:
-  - name: api
+  - name: system
 paths:
   /health:
     get:
       operationId: checkHealth
+      tags:
+      - system
       responses:
         '200':
           description: 'OK'

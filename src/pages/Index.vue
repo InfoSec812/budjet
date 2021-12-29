@@ -9,9 +9,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'PageIndex',
   setup() {
-    return {
-
-    };
+    return { };
   },
 });
 </script>
