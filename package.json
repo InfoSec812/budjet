@@ -18,21 +18,21 @@
     "depupdate": {
       "runOnChangeOnly": false,
       "patterns": [
-        "package.json",
-        "yarn.lock"
-      ]
+        "package",
+        "yarn"
+      ],
+      "extensions": "json,lock"
     },
     "openapi": {
-      "delay": 2000,
       "patterns": [
-        "openapi.yml"
+        "openapi"
       ],
+      "extensions": "yml",
       "inherit": true,
       "clearBuffer": true
     },
     "prism": {
       "inherit": true,
-      "delay": 2000,
       "patterns": [
         "openapi"
       ],
@@ -42,7 +42,6 @@
     },
     "serve": {
       "inherit": true,
-      "delay": 6000,
       "patterns": [
         "package"
       ],
