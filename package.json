@@ -8,13 +8,21 @@
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
     "test": "echo \"No test specified\" && exit 0",
+    "depupdate": "yarn",
     "serve": "quasar dev",
     "watch": "npm-watch",
     "prism": "prism mock -d --cors -p 7080 openapi.yml",
     "openapi": "openapi-generator-cli generate -g typescript-axios -i openapi.yml -o src/sdk/ -p withSeparateModelsAndApi=true,apiPackage=api,modelPackage=models,legacyDiscriminatorBehavior=false"
   },
   "watch": {
+    "depupdate": {
+      "patterns": [
+        "package.json",
+        "yarn.lock"
+      ]
+    },
     "openapi": {
+      "delay": 2000,
       "patterns": [
         "openapi.yml"
       ],
@@ -24,6 +32,7 @@
     },
     "prism": {
       "inherit": true,
+      "delay": 2000,
       "patterns": [
         "openapi"
       ],
@@ -33,7 +42,7 @@
     },
     "serve": {
       "inherit": true,
-      "delay": 4000,
+      "delay": 6000,
       "patterns": [
         "package"
       ],
