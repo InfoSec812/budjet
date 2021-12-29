@@ -16,6 +16,7 @@
   },
   "watch": {
     "depupdate": {
+      "runOnChangeOnly": false,
       "patterns": [
         "package.json",
         "yarn.lock"
@@ -26,7 +27,6 @@
       "patterns": [
         "openapi.yml"
       ],
-      "runOnChangeOnly": false,
       "inherit": true,
       "clearBuffer": true
     },
