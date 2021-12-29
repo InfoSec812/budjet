@@ -24,6 +24,173 @@ servers:
 tags:
   - name: system
 paths:
+  /bills:
+    get:
+      operationId: getAllBills
+      description: Retrieve an array of all Bills ordered by next due date
+      # security:
+      #   - Keycloak: ['view', 'edit', 'admin']
+      tags:
+      - bills
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bill'
+                minItems: 0
+        default:
+          $ref: '#/components/responses/Error'
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+            nullable: true
+          required: false
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+            nullable: true
+          required: false
+    post:
+      operationId: addBill
+      description: Adds a new bill item to the system
+      # security:
+      #   - Keycloak: ['edit', 'admin']
+      tags:
+      - bills
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewBill'
+      responses:
+        '201':
+          description: 'CREATED'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+        default:
+          $ref: '#/components/responses/Error'
+  /bills/due:
+    get:
+      operationId: getDueBills
+      description: Returns Bills along with Month information for due dates
+      tags:
+      - bills
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+        default:
+          $ref: '#/components/responses/Error'
+  /bill/{id}:
+    get:
+      operationId: getBill
+      description: Retrieve the Bill specified by the ID
+      # security:
+      #   - Keycloak: ['view', 'edit', 'admin']
+      tags:
+      - bills
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+        default:
+          $ref: '#/components/responses/Error'
+    put:
+      operationId: updateBill
+      description: Updates the details about a bill item in the system
+      # security:
+      #   - Keycloak: ['edit', 'admin']
+      tags:
+      - bills
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Bill'
+      responses:
+        '202':
+          description: 'ACCEPTED'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+        default:
+          $ref: '#/components/responses/Error'
+    delete:
+      operationId: deleteBill
+      description: Delete the Bill specified by the ID
+      # security:
+      #   - Keycloak: ['edit', 'admin']
+      tags:
+      - bills
+      responses:
+        '204':
+          description: 'NO CONTENT'
+        default:
+          $ref: '#/components/responses/Error'
+    parameters:
+      - in: path
+        required: true
+        name: id
+        schema:
+          type: string
+          format: uuid
+  /bill/{id}/{year}/{month}:
+    put:
+      description: Update the paid status for a given month/year for a given bill ID
+      operationId: updatePaidStatus
+      # security:
+      #   - Keycloak: ['edit', 'admin']
+      tags:
+      - bills
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: path
+          name: year
+          schema:
+            type: number
+            format: int64
+          required: true
+        - in: path
+          name: month
+          schema:
+            type: number
+            format: int64
+          required: true
+        - in: query
+          name: paid
+          schema:
+            type: boolean
+          required: true
+      responses:
+        '202':
+          description: ACCEPTED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Month'
   /health:
     get:
       operationId: checkHealth
@@ -60,3 +227,95 @@ components:
         code:
           type: number
           format: int64
+    Month:
+      type: object
+      required:
+      - year
+      - month
+      - day
+      - paid
+      properties:
+        year:
+          type: integer
+        month:
+          type: integer
+          minimum: 1
+          maximum: 12
+          nullable: false
+        day:
+          type: integer
+          minimum: 1
+          maximum: 31
+        paid:
+          type: boolean
+          default: false
+          nullable: false
+    NewBill:
+      type: object
+      required:
+        - name
+        - amount
+        - due_date
+        - currency
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        amount:
+          type: number
+          minimum: 0
+          maximum: 3000
+          multipleOf: 0.01
+        due_date:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 31
+        late_date:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 31
+        periodicity:
+          type: string
+          enum:
+            - monthly
+            - bimonthly
+            - weekly
+            - quarterly
+            - semiannually
+            - annually
+          default: monthly
+        start_date:
+          type: string
+          format: date
+        link:
+          type: string
+          format: uri
+        currency:
+          type: string
+          enum:
+          - USD
+          - EUR
+          - GBP
+          default: 'USD'
+    Bill:
+      type: object
+      required:
+        - id
+        - name
+        - amount
+        - due_date
+        - months
+      allOf:
+        - $ref: '#/components/schemas/NewBill'
+        - type: object
+          properties:
+            months:
+              type: array
+              minItems: 10
+              maxItems: 10
+              items:
+                $ref: '#/components/schemas/Month'

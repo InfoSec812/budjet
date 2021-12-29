@@ -1,5 +1,5 @@
 import { PiniaPluginContext, StateTree, DefineStoreOptions } from 'pinia';
-import { Configuration, SystemApi } from 'src/sdk';
+import { BillsApi, Configuration, SystemApi } from 'src/sdk';
 
 // Extend pinia with new attributes which allow us to attach our API Clients
 declare module 'pinia' {
@@ -9,6 +9,7 @@ declare module 'pinia' {
     getters?: G
     actions?: A
     systemApi: SystemApi
+    billsApi: BillsApi
   }
   export interface DefineStoreOptionsInPlugin<Id extends string, S extends StateTree, G, A> extends Omit<DefineStoreOptions<Id, S, G, A>, 'id' | 'actions'> {
     apiConfig: Configuration
