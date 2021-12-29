@@ -21,7 +21,9 @@ export const APIPlugin = ({ options, store }: PiniaPluginContext): void => {
 
   if (apiConfig) {
     store.systemApi = new SystemApi(apiConfig);
+    store.billsApi = new BillsApi(apiConfig);
   } else {
     store.systemApi = new SystemApi();
+    store.billsApi = new BillsApi();
   }
 };

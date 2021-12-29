@@ -11,7 +11,7 @@ export const initState = (): BillState => ({
 });
 
 // eslint-disable-next-line no-unused-vars
-const progressInit = (increment: (arg0?: number) => void): AxiosRequestConfig => {
+const progressInit = (increment: (amount?: number) => void): AxiosRequestConfig => {
   increment(10);
   const axiosConfig = {
     onUploadProgress: (progressEvent: ProgressEvent) => {
@@ -32,22 +32,28 @@ export const billStore = defineStore('bills', {
   actions: {
     async loadBills(
                     notify: (message: string, type: string) => void,
-                    increment: (arg0?: number) => void,
+                    increment: (amount?: number) => void,
                     stop: () => void,
                   ): Promise<void> {
+      console.log('A');
       const axiosConfig = progressInit(increment);
       try {
-        const { data } = await this.billsApi.getAllBills('', '', axiosConfig);
+        console.log('B');
+        const { data } = await this.billsApi.getAllBills(undefined, undefined, axiosConfig);
+        console.log('C');
         this.updateBills(data);
+        console.log('D');
         stop();
+        console.log('E');
       } catch (err) {
         notify('An error occurred loading Bill items from the API', 'negative');
+        console.log(`Error: ${JSON.stringify(err)}`);
       }
       increment(100);
     },
     async loadBill(
                   notify: (message: string, type: string) => void,
-                  increment: (arg0?: number) => void,
+                  increment: (amount?: number) => void,
                   stop: () => void,
                   id: string,
                 ): Promise<Bill> {
@@ -76,7 +82,7 @@ export const billStore = defineStore('bills', {
     },
     async saveBill(
                   notify: (message: string, type: string) => void,
-                  increment: (arg0?: number) => void,
+                  increment: (amount?: number) => void,
                   stop: () => void,
                   bill: Bill,
                 ): Promise<void> {
@@ -101,7 +107,7 @@ export const billStore = defineStore('bills', {
     },
     async changePaidStatus(
                           notify: (message: string, type: string) => void,
-                          increment: (arg0?: number) => void,
+                          increment: (amount?: number) => void,
                           stop: () => void,
                           id: string,
                           month: Month,

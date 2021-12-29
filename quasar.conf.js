@@ -30,7 +30,6 @@ module.exports = configure((ctx) => ({
   // --> boot files are part of "main.js"
   // https://quasar.dev/quasar-cli/boot-files
   boot: [
-    'axios.ts',
     'pinia.ts',
   ],
 
@@ -105,7 +104,9 @@ module.exports = configure((ctx) => ({
     // directives: [],
 
     // Quasar plugins
-    plugins: [],
+    plugins: [
+      'Notify'
+    ],
   },
 
   // animations: 'all', // --- includes all animations
