@@ -1,7 +1,13 @@
 {
   "recommendations": [
-    "dbaeumer.vscode-eslint",
-    "octref.vetur"
+    "vscjava.vscode-java-pack",
+    "johnsoncodehk.volar",
+    "hollowtree.vue-snippets",
+    "wscats.vue",
+    "octref.vetur",
+    "ms-vscode.vscode-typescript-next",
+    "oderwat.indent-rainbow",
+    "2gua.rainbow-brackets"
   ],
   "unwantedRecommendations": [
     "hookyqr.beautify",
