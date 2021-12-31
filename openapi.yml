@@ -46,6 +46,16 @@ paths:
       tags:
         - system
 components:
+  securitySchemes:
+    SSO:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'https://sso.example.com/auth/realm/app/authorize'
+          scopes:
+            view: 'Can view information, but not change any'
+            edit: Can edit some information and see own profile
+            admin: Can edit all information and view all user profiles
   responses:
     Error:
       description: Error
