@@ -9,15 +9,18 @@ servers:
     description: "API URL"
     variables:
       base_path:
+        description: The path on the server where the API endpoints are mounted
         enum:
           - /
           - /api/v1
         default: /
       domain:
+        description: The fully qualified domain name or IP address of the server
         enum:
           - localhost
         default: localhost
       port:
+        description: The port on which the API is bound
         enum:
           - '7080'
         default: '7080'
@@ -26,6 +29,7 @@ tags:
 paths:
   /health:
     get:
+      description: Checks the health of the API service
       operationId: checkHealth
       responses:
         '200':
@@ -47,6 +51,7 @@ components:
   schemas:
     Errors:
       type: object
+      description: A schema for describing all 4xx and 5xx errors as well as health check responses.
       required:
         - code
       properties:
@@ -58,3 +63,4 @@ components:
         code:
           type: number
           format: int64
+      additionalProperties: true

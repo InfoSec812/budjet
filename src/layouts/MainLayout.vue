@@ -12,10 +12,8 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          BudJet
         </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
@@ -42,6 +40,7 @@ export default defineComponent({
   name: 'MainLayout',
 
   setup() {
+
     const leftDrawerOpen = ref(false);
 
     const toggleLeftDrawer = () => {

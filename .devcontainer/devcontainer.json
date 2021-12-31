@@ -36,7 +36,6 @@
   
     // Add the IDs of extensions you want installed when the container is created.
     "extensions": [
-      "vscjava.vscode-java-pack",
       "johnsoncodehk.volar",
       "hollowtree.vue-snippets",
       "wscats.vue",
@@ -53,5 +52,9 @@
     // "postCreateCommand": "java -version",
   
     // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
-    // "remoteUser": "vscode"
+    // "remoteUser": "vscode",
+    
+    "features": {
+      "git": "latest"
+    }
   }    
