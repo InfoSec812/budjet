@@ -25,7 +25,7 @@ servers:
           - '7080'
         default: '7080'
 tags:
-  - name: api
+  - name: system
 paths:
   /health:
     get:
@@ -40,6 +40,8 @@ paths:
                 $ref: '#/components/schemas/Errors'
         default:
           $ref: '#/components/responses/Error'
+      tags:
+        - system
 components:
   responses:
     Error:
