@@ -275,7 +275,7 @@
       "import { boot } from 'quasar/wrappers';",
       "import { APIPlugin } from 'src/stores/APIPlugin';",
       "",
-      "export default boot(async ({ app }) => {",
+      "export default boot(({ app }) => {",
       "  const pinia = createPinia();",
       "",
       "  pinia.use((context) => {",
