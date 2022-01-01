@@ -15,39 +15,18 @@
     "openapi": "openapi-generator-cli generate -g typescript-axios -i openapi.yml -o src/sdk/ -p withSeparateModelsAndApi=true,apiPackage=api,modelPackage=models,legacyDiscriminatorBehavior=false"
   },
   "watch": {
-    "depupdate": {
-      "runOnChangeOnly": false,
-      "patterns": [
-        "package.json",
-        "yarn.lock"
-      ]
-    },
     "openapi": {
-      "delay": 2000,
       "patterns": [
         "openapi.yml"
-      ],
-      "inherit": true,
-      "clearBuffer": true
-    },
-    "prism": {
-      "inherit": true,
-      "delay": 2000,
-      "patterns": [
-        "openapi"
-      ],
-      "extensions": [
-        "yml"
       ]
     },
+    "prism": true,
     "serve": {
       "inherit": true,
-      "delay": 6000,
       "patterns": [
-        "package"
-      ],
-      "extensions": [
-        "json"
+        "package.json",
+        "quasar.conf.js",
+        "yarn.lock"
       ]
     }
   },
@@ -55,7 +34,10 @@
     "@quasar/extras": "^1.0.0",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
+<<<<<<< HEAD
     "dayjs": "^1.10.7",
+=======
+>>>>>>> 3c0c563 (Fixed npm-watch config)
     "pinia": "^2.0.9",
     "quasar": "^2.0.0"
   },
