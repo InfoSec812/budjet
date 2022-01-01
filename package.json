@@ -16,21 +16,12 @@
   "watch": {
     "openapi": {
       "patterns": [
-        "openapi"
+        "openapi.yml"
       ],
-      "extensions": "yml",
       "inherit": true,
       "clearBuffer": true
     },
-    "prism": {
-      "inherit": true,
-      "patterns": [
-        "openapi"
-      ],
-      "extensions": [
-        "yml"
-      ]
-    },
+    "prism": true,
     "serve": {
       "inherit": true,
       "patterns": [
@@ -44,6 +35,7 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "core-js": "^3.6.5",
+    "pinia": "^2.0.9",
     "quasar": "^2.0.0"
   },
   "devDependencies": {
