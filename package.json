@@ -34,10 +34,7 @@
     "@quasar/extras": "^1.0.0",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
-<<<<<<< HEAD
     "dayjs": "^1.10.7",
-=======
->>>>>>> 3c0c563 (Fixed npm-watch config)
     "pinia": "^2.0.9",
     "quasar": "^2.0.0"
   },
