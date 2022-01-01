@@ -17,7 +17,7 @@
   // }
   "Init System API": {
     "scope": "typescript",
-    "prefix": "dwsysapi",
+    "prefix": "dw001",
     "body": [
     "const healthStatus = ref(false);",
     "const healthApi = new SystemApi();",
@@ -38,7 +38,7 @@
   },
   "Add computed Health style": {
     "scope": "typescript",
-    "prefix": "dwhealth",
+    "prefix": "dw002",
     "body": [
       "healthIndicator: computed(() => {",
       "    if (healthStatus.value) {",
@@ -49,13 +49,13 @@
     ]
   },
   "Add Health indicator": {
-    "prefix": "dwindicator",
+    "prefix": "dw003",
     "body": [
       "<div :style=\"healthIndicator\">⬤</div>"
     ]
   },
   "Create Bill types": {
-    "prefix": "dwbill",
+    "prefix": "dw004",
     "body": [
     "NewBill:",
     "  type: object",
@@ -120,7 +120,7 @@
     ]
   },
   "Bill get/post": {
-    "prefix": "dwbillget",
+    "prefix": "dw005",
     "body": [
 		"/bills:",
 		"  get:",
@@ -177,7 +177,7 @@
     ]
   },
   "Bill update/delete": {
-    "prefix": "dwbilldelete",
+    "prefix": "dw006",
 	"body": [
         "/bill/{id}:",
         "  get:",
@@ -234,7 +234,7 @@
   },
   "APIPlugin": {
     "scope": "typescript",
-    "prefix": "dwplugin",
+    "prefix": "dw007",
     "body": [
       "import { PiniaPluginContext, StateTree, DefineStoreOptions } from 'pinia';",
       "import { BillsApi, Configuration, SystemApi } from 'src/sdk';",
@@ -269,7 +269,7 @@
   },
   "Pinia Boot": {
     "scope": "typescript",
-    "prefix": "dwpiniaboot",
+    "prefix": "dw008",
     "body": [
       "import { createPinia } from 'pinia';",
       "import { boot } from 'quasar/wrappers';",
@@ -288,7 +288,7 @@
   },
   "BillStore Init": {
     "scope": "typescript",
-    "prefix": "dwbillstore",
+    "prefix": "dw009",
     "body": [
       "import { defineStore } from 'pinia';",
       "import { Bill } from 'src/sdk';",
@@ -315,14 +315,14 @@
   },
   "BillStore getter": {
     "scope": "typescript",
-    "prefix": "dwbillstoregetter",
+    "prefix": "dw010",
     "body": [
       "billsList: (state) => state.bills,"
     ]
   },
   "dwbillstoreload": {
     "scope": "typescript",
-    "prefix": "dwbillstoreload",
+    "prefix": "dw011",
     "body": [
       "async loadBills(): Promise<void> {",
       "  try {",
@@ -339,7 +339,7 @@
   },
   "Instantiate BillStore in component": {
     "scope": "typescript",
-    "prefix": "dwsetup",
+    "prefix": "dw012",
     "body": [
       "const bills = billStore();",
       "",
@@ -353,7 +353,7 @@
     ]
   },
   "Add QTable": {
-    "prefix": "dwqtable",
+    "prefix": "dw013",
     "body": [
       "<q-table",
       "  title=\"Bills\"",
