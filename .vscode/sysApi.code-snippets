@@ -230,6 +230,166 @@
         "      schema:",
         "        type: string",
         "        format: uuid"
-	]
+	  ]
+  },
+  "APIPlugin": {
+    "scope": "typescript",
+    "prefix": "dwplugin",
+    "body": [
+      "import { PiniaPluginContext, StateTree, DefineStoreOptions } from 'pinia';",
+      "import { BillsApi, Configuration, SystemApi } from 'src/sdk';",
+      "",
+      "// Extend pinia with new attributes which allow us to attach our API Clients",
+      "declare module 'pinia' {",
+      "  export interface PiniaCustomProperties<Id, S, G, A> {",
+      "    id: Id",
+      "    state?: () => S",
+      "    getters?: G",
+      "    actions?: A",
+      "    systemApi: SystemApi",
+      "    billsApi: BillsApi",
+      "  }",
+      "  export interface DefineStoreOptionsInPlugin<Id extends string, S extends StateTree, G, A> extends Omit<DefineStoreOptions<Id, S, G, A>, 'id' | 'actions'> {",
+      "    apiConfig: Configuration",
+      "  }",
+      "}",
+      "",
+      "export const APIPlugin = ({ options, store }: PiniaPluginContext): void => {",
+      "  const { apiConfig } = options;",
+      "",
+      "  if (apiConfig) {",
+      "    store.systemApi = new SystemApi(apiConfig);",
+      "    store.billsApi = new BillsApi(apiConfig);",
+      "  } else {",
+      "    store.systemApi = new SystemApi();",
+      "    store.billsApi = new BillsApi();",
+      "  }",
+      "};"
+    ]
+  },
+  "Pinia Boot": {
+    "scope": "typescript",
+    "prefix": "dwpiniaboot",
+    "body": [
+      "import axios from 'axios';",
+      "import { createPinia } from 'pinia';",
+      "import { boot } from 'quasar/wrappers';",
+      "import { Configuration } from 'src/sdk';",
+      "import { APIPlugin } from 'src/stores/APIPlugin';",
+      "",
+      "export default boot(async ({ app }) => {",
+      "  let apiConfig: Configuration | undefined = undefined;",
+      "",
+      "  try {",
+      "    // Attempt to load environment information if available.",
+      "    const res = await axios.get('/env/environment.json');",
+      "    if (",
+      "      'basePath' in (res.data as Configuration)",
+      "      || 'apiKey' in (res.data as Configuration)",
+      "      || 'username' in (res.data as Configuration)",
+      "      || 'password' in (res.data as Configuration)",
+      "      || 'accessToken' in (res.data as Configuration)",
+      "      || 'baseOptions' in (res.data as Configuration)",
+      "      || 'formDataCtor' in (res.data as Configuration)",
+      "    ) {",
+      "      apiConfig = res.data as Configuration;",
+      "    }",
+      "  } catch (err) {",
+      "    // If no environment config is available, use defaults appropriate for dev environment.",
+      "    apiConfig = undefined;",
+      "  }",
+      "  const pinia = createPinia();",
+      "",
+      "  pinia.use((context) => {",
+      "    if (apiConfig instanceof Configuration) {",
+      "      context.options.apiConfig = apiConfig;",
+      "    }",
+      "    return APIPlugin(context);",
+      "  });",
+      "",
+      "  app.use(pinia);",
+      "});"
+    ]
+  },
+  "BillStore Init": {
+    "scope": "typescript",
+    "prefix": "dwbillstore",
+    "body": [
+      "import { defineStore } from 'pinia';",
+      "import { Bill, Month } from 'src/sdk';",
+      "import { AxiosRequestConfig } from 'axios';",
+      "",
+      "interface BillState {",
+      "  bills: Bill[]",
+      "}",
+      "",
+      "export const initState = (): BillState => ({",
+      "  bills: [],",
+      "});",
+      "",
+      "export const billStore = defineStore('bills', {",
+      "  state: initState,",
+      "",
+      "  getters: {",
+      "    billsList: (state) => state.bills,",
+      "  },",
+      "",
+      "  actions: {",
+      "  }",
+      "});"
+    ]
+  },
+  "BillStore getter": {
+    "scope": "typescript",
+    "prefix": "dwbillstoregetter",
+    "body": [
+      "billsList: (state) => state.bills,"
+    ]
+  },
+  "dwbillstoreload": {
+    "scope": "typescript",
+    "prefix": "dwbillstoreload",
+    "body": [
+      "async loadBills(): Promise<void> {",
+      "  try {",
+      "    const { data } = await this.billsApi.getAllBills();",
+      "    this.updateBills(data);",
+      "  } catch (err) {",
+      "    console.log(`Do something with this error: ${JSON.stringify(err)}`);",
+      "  }",
+      "},",
+      "updateBills(bills: Bill[]): void {",
+      "  this.bills = bills;",
+      "},"
+    ]
+  },
+  "Instantiate BillStore in component": {
+    "scope": "typescript",
+    "prefix": "dwsetup",
+    "body": [
+      "const bills = billStore();",
+      "",
+      "function loadBills() {",
+      "  console.log('C-A');",
+      "  progressBar?.value?.start(50);",
+      "  console.log('C-B');",
+      "  void bills.loadBills(notify, incrementer, stop);",
+      "}",
+      "",
+      "if (bills.billsList.length < 1) {",
+      "  loadBills();",
+      "}"
+    ]
+  },
+  "Add QTable": {
+    "prefix": "dwqtable",
+    "body": [
+      "<q-table",
+      "  title=\"Bills\"",
+      "  class=\"sticky-table-elements\"",
+      "  :rows=\"rows\"",
+      "  flat bordered>",
+      "</q-table>"
+    ]
   }
 }
