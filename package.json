@@ -17,18 +17,15 @@
     "openapi": {
       "patterns": [
         "openapi.yml"
-      ],
-      "inherit": true,
-      "clearBuffer": true
+      ]
     },
     "prism": true,
     "serve": {
       "inherit": true,
       "patterns": [
-        "package"
-      ],
-      "extensions": [
-        "json"
+        "package.json",
+        "quasar.conf.js",
+        "yarn.lock"
       ]
     }
   },
