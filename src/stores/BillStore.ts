@@ -90,10 +90,6 @@ export const billStore = defineStore('bills', {
     async newBill(
                     bill: NewBill,
                   ): Promise<void> {
-      if (bill?.id === undefined || bill?.id === null) {
-        this.q.notify({message: 'The ID string of the bill must be set', type: 'negative'});
-        return Promise.reject('The ID string of the bill must be set');
-      }
       const axiosConfig = progressInit(this.q.loadingBar);
       try {
         const { data } = await this.billsApi.addBill(bill, axiosConfig);
