@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
-import { Bill, Month } from 'src/sdk';
+import { Bill, Month, NewBill } from 'src/sdk';
 import { AxiosRequestConfig } from 'axios';
+import { LoadingBar } from 'quasar';
 
 interface BillState {
   bills: Bill[]
@@ -11,14 +12,12 @@ export const initState = (): BillState => ({
 });
 
 // eslint-disable-next-line no-unused-vars
-const progressInit = (increment: (amount?: number) => void): AxiosRequestConfig => {
-  increment(10);
-  const axiosConfig = {
-    onUploadProgress: (progressEvent: ProgressEvent) => {
-      increment(progressEvent.loaded * 80);
-    },
-  };
-  increment(20);
+const progressInit = (progressBar: LoadingBar): AxiosRequestConfig => {
+  const axiosConfig = {} as AxiosRequestConfig;
+  
+  progressBar.increment(10);
+  axiosConfig.onUploadProgress = (progressEvent: ProgressEvent) => progressBar.increment(progressEvent.loaded * 80);
+  progressBar.increment(20);
   return axiosConfig;
 };
 
@@ -31,41 +30,30 @@ export const billStore = defineStore('bills', {
 
   actions: {
     async loadBills(
-                    notify: (message: string, type: string) => void,
-                    increment: (amount?: number) => void,
-                    stop: () => void,
                   ): Promise<void> {
-      console.log('A');
-      const axiosConfig = progressInit(increment);
+      const axiosConfig = progressInit(this.q.loadingBar);
       try {
-        console.log('B');
         const { data } = await this.billsApi.getAllBills(undefined, undefined, axiosConfig);
-        console.log('C');
         this.updateBills(data);
-        console.log('D');
         stop();
-        console.log('E');
       } catch (err) {
-        notify('An error occurred loading Bill items from the API', 'negative');
+        this.q.notify({message: 'An error occurred loading Bill items from the API', type: 'negative'});
         console.log(`Error: ${JSON.stringify(err)}`);
       }
-      increment(100);
+      this.q.loadingBar.increment(100);
     },
     async loadBill(
-                  notify: (message: string, type: string) => void,
-                  increment: (amount?: number) => void,
-                  stop: () => void,
                   id: string,
                 ): Promise<Bill> {
-      const axiosConfig = progressInit(increment);
+      const axiosConfig = progressInit(this.q.loadingBar);
       try {
         const { data } = await this.billsApi.getBill(id, axiosConfig);
-        increment(100);
+        this.q.loadingBar.increment(100);
         this.addBill(data);
         return Promise.resolve(data);
       } catch (err) {
         stop();
-        notify('An error occurred loading Bill items from the API', 'negative');
+        this.q.notify({message: 'An error occurred loading Bill items from the API', type: 'negative'});
         return Promise.reject(err);
       }
     },
@@ -81,24 +69,40 @@ export const billStore = defineStore('bills', {
       this.bills[billIndex] = updatedBill;
     },
     async saveBill(
-                  notify: (message: string, type: string) => void,
-                  increment: (amount?: number) => void,
-                  stop: () => void,
                   bill: Bill,
                 ): Promise<void> {
       if (bill?.id === undefined || bill?.id === null) {
-        notify('The ID string of the bill must be set', 'negative');
+        this.q.notify({message: 'The ID string of the bill must be set', type: 'negative'});
         return Promise.reject('The ID string of the bill must be set');
       }
-      const axiosConfig = progressInit(increment);
+      const axiosConfig = progressInit(this.q.loadingBar);
       try {
-        const { data } = await this.billsApi.updateBill(bill.id, bill, axiosConfig);
-        increment(100);
-        this.updateBill(data);
+        await this.billsApi.updateBill(bill.id, bill, axiosConfig);
+        this.q.loadingBar.increment(100);
+        this.updateBill(bill);
         return Promise.resolve();
       } catch (err) {
         stop();
-        notify('An error occurred saving the bill updates', 'negative');
+        this.q.notify({message: 'An error occurred saving the bill updates', type: 'negative'});
+        return Promise.reject(err);
+      }
+    },
+    async newBill(
+                    bill: NewBill,
+                  ): Promise<void> {
+      if (bill?.id === undefined || bill?.id === null) {
+        this.q.notify({message: 'The ID string of the bill must be set', type: 'negative'});
+        return Promise.reject('The ID string of the bill must be set');
+      }
+      const axiosConfig = progressInit(this.q.loadingBar);
+      try {
+        const { data } = await this.billsApi.addBill(bill, axiosConfig);
+        this.q.loadingBar.increment(100);
+        this.addBill(data);
+        return Promise.resolve();
+      } catch (err) {
+        stop();
+        this.q.notify({message: 'An error occurred saving the bill updates', type: 'negative'});
         return Promise.reject(err);
       }
     },
@@ -106,21 +110,18 @@ export const billStore = defineStore('bills', {
       this.bills.push(bill);
     },
     async changePaidStatus(
-                          notify: (message: string, type: string) => void,
-                          increment: (amount?: number) => void,
-                          stop: () => void,
                           id: string,
                           month: Month,
                         ) {
-      const axiosConfig = progressInit(increment);
+      const axiosConfig = progressInit(this.q.loadingBar);
       try {
         const { data } = await this.billsApi.updatePaidStatus(id, month.year,
           month.month, month.paid, axiosConfig);
-        increment(100);
+        this.q.loadingBar.increment(100);
         this.updateMonth(id, data);
       } catch (err) {
         stop();
-        notify('An error occurred saving the bill updates', 'negative');
+        this.q.notify({message: 'An error occurred saving the bill updates', type: 'negative'});
       }
     },
     updateMonth(id: string, month: Month): void {
@@ -143,5 +144,22 @@ export const billStore = defineStore('bills', {
         }
       }
     },
+    async getBillById(id: string): Promise<Bill | undefined> {
+      const retVal = this.bills.find(bill => bill.id === id);
+
+      if (retVal === undefined || retVal === null) {
+        try {
+          const axiosConfig = progressInit(this.q.loadingBar);
+          const { data } = await this.billsApi.getBill(id, axiosConfig);
+          this.q.loadingBar.increment(100);
+          this.addBill(data);
+          return Promise.resolve(data);
+        } catch(err) {
+          this.q.notify({message: `Unable to load bill with ID: ${id}`, type: 'negative'});
+        }
+      }
+
+      return retVal;
+    }
   },
 });

@@ -23,7 +23,21 @@ servers:
         default: '7080'
 tags:
   - name: system
+  - name: bills
 paths:
+  /user/current:
+    get:
+      description: Get the currently logged in user
+      operationId: getCurrentUser
+      tags:
+      - system
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
   /bills:
     get:
       operationId: getAllBills
@@ -319,3 +333,12 @@ components:
               maxItems: 10
               items:
                 $ref: '#/components/schemas/Month'
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+      additionalProperties: true

@@ -15,16 +15,50 @@
           Quasar App
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <q-btn-dropdown 
+          dropdown-icon="account_circle"
+          no-icon-animation flat dense
+          :label="currentUser?.name"
+          align="right"
+          style="width: fit-content;"
+          >
+          <q-list>
+            <q-item clickable>
+              <q-item-section>Profile</q-item-section>
+              <q-item-section avatar><q-icon name="person_outline" size="1.2rem" style="padding-left: 0.3rem" /></q-item-section>
+            </q-item>
+            <q-item clickable>
+              <q-item-section>Logout</q-item-section>
+              <q-item-section avatar><q-icon name="logout" size="1.2rem" style="padding-left: 0.3rem" /></q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
       </q-toolbar>
     </q-header>
 
     <q-drawer
       v-model="leftDrawerOpen"
-      show-if-above
       bordered
     >
       <q-list>
+        <q-item clickable to="/" >
+          <q-item-section avatar>
+            <q-icon name="grid_on" color="black" />
+          </q-item-section>
+          <q-item-section style="color: black;">Bills</q-item-section>
+        </q-item>
+        <q-item clickable to="/income" >
+          <q-item-section avatar>
+            <q-icon name="money" color="black" />
+          </q-item-section>
+          <q-item-section style="color: black;">Income</q-item-section>
+        </q-item>
+        <q-item clickable to="/cashflow" >
+          <q-item-section avatar>
+            <q-icon name="air" color="black" />
+          </q-item-section>
+          <q-item-section style="color: black;">Cash Flow</q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -36,12 +70,15 @@
 
 <script lang="ts">
 
-import { defineComponent, ref } from 'vue';
+import { sysStore } from 'src/stores/SystemStore';
+import { defineComponent, ref, computed } from 'vue';
 
 export default defineComponent({
   name: 'MainLayout',
 
-  setup() {
+  async setup() {
+    const sys = sysStore();
+    await sys.getCurrentUser();
     const leftDrawerOpen = ref(false);
 
     const toggleLeftDrawer = () => {
@@ -51,6 +88,7 @@ export default defineComponent({
     return {
       leftDrawerOpen,
       toggleLeftDrawer,
+      currentUser: computed(() => sys.currentUser)
     };
   },
 });

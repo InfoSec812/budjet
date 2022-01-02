@@ -1,10 +1,12 @@
 <template>
-  <div class="flex q-pa-md" style="margin: 0;">
+  <div class="flex q-pa-md grid-container">
     <q-table
       title="Bills"
-      class="sticky-table-elements"
+      class="sticky-table-elements col-grow"
       :rows="rows"
-      flat bordered>
+      flat bordered
+      :style="tableDimensions"
+      >
       <template v-slot:top>
         Bills <q-btn icon="refresh" @click="reload" flat dense/>
       </template>
@@ -23,59 +25,36 @@
             <a :href="props.row.link" target="_blank">{{ props.row.name }}</a></q-td>
           <q-td>{{ moneyFormat(props.row.amount, props.row.currency) }}</q-td>
           <q-td>{{ props.row.due_date }}</q-td>
-          <q-td v-for="(month, index) in props.row.months" :key="index" style="align: center;">
+          <q-td v-for="(month, index) in props.row.months" :key="index" style="text-align: center;">
             <q-checkbox v-model="month.paid" @click="toggleMonthPaid(props.row.id, month)" />
           </q-td>
         </q-tr>
       </template>
     </q-table>
-    <q-ajax-bar ref="progressBar" position="bottom" size="0.8rem"/>
-    <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn fab icon="add" color="accent" />
+    <q-page-sticky position="bottom-right" :offset="[8, 8]">
+      <q-btn fab icon="add" color="accent" to="/bill/add" />
     </q-page-sticky>
   </div>
 </template>
 
 <script lang="ts">
-import { QAjaxBar, useQuasar } from 'quasar';
-import { defineComponent, ref, computed } from 'vue';
-import dayjs from 'dayjs';
+import { defineComponent, computed, ref } from 'vue';
+import { date, dom } from 'quasar';
 import { Month } from 'src/sdk';
 import { billStore } from 'src/stores/BillStore';
 
+const { formatDate, addToDate } = date;
+const { height, width } = dom;
+
 export default defineComponent(() => {
-  const $q = useQuasar();
-  const progressBar = ref<QAjaxBar>();
+  const gridContainer = ref<Element>()
   const bills = billStore();
-
-  /**
-   * Wrap the increment method from the Quasar QAjaxBar for use in stores
-   * @param increment Amount to increase the progress bar (0 to 100)
-   */
-  const incrementer = (amount?: number) => {
-    progressBar?.value?.increment(amount);
-  };
-
-  /**
-   * Wrap the stop method from the Quasar QAjaxBar for use in stores
-   */
-  const stop = () => progressBar?.value?.stop();
-
-  /**
-   * Use Quasar's Notify plugin to show a toast/snackbar message
-   * @param message The message to be displayed in the alert
-   * @param type The type of alert 'positive', 'negative', 'warning', 'info', 'ongoing'
-   */
-  const notify = (message: string, type = 'info') => $q.notify({ message, type });
 
   /**
    * Load the list of bills from the API
    */
   function loadBills() {
-    console.log('C-A');
-    progressBar?.value?.start(50);
-    console.log('C-B');
-    void bills.loadBills(notify, incrementer, stop);
+    void bills.loadBills();
   }
 
   /**
@@ -83,9 +62,10 @@ export default defineComponent(() => {
    * @param num Numeric month ID
    */
   const monthName = (num = 0): string => {
-    const mon = new Date().setMonth(num);
-    const dateObj = dayjs(mon);
-    return dateObj.format('MMM');
+    return formatDate(
+      addToDate(new Date(), { months: num }),
+      'MMM'
+    );
   }
 
   if (bills.billsList === undefined || bills.billsList === null || bills.billsList.length < 1) {
@@ -125,7 +105,7 @@ export default defineComponent(() => {
    * @param month The Month object which we are updating within that bill
    */
   const toggleMonthPaid = (id: string, month: Month): void => {
-    void bills.changePaidStatus(notify, incrementer, stop, id, month);
+    void bills.changePaidStatus(id, month);
   }
 
   return {
@@ -135,6 +115,15 @@ export default defineComponent(() => {
     monthName,
     moneyFormat,
     toggleMonthPaid,
+    tableDimensions: computed(() => {
+      let retVal = '';
+      if (gridContainer?.value) {
+        const tableHeight = height(gridContainer?.value) - 5;
+        const tableWidth = width(gridContainer?.value) - 5;
+        retVal = `width: ${tableWidth}px; height: ${tableHeight}px;`
+      }
+      return retVal;
+    })
   }
 });
 </script>
@@ -149,12 +138,19 @@ $due-left: ($name-width + $amt-width)
 $header-color: #CCEAEA
 $column-highlight: #E7F1FA
 
+.grid-container
+  overflow: hidden
+  height: 88vh
+
 .sticky-table-elements
   /* height or max-height is important */
-  min-height: 82vh
-  max-height: 88vh
-  min-width: 75vw
-  max-width: 100vw
+  // max-height: 88vh
+  // max-width: 100%
+  position: relative
+  top: 5px
+  left: 5px
+  right: 5px
+  bottom: 20px
   padding: 0px
 
   & .q-table
