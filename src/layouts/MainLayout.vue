@@ -47,7 +47,7 @@
           </q-item-section>
           <q-item-section style="color: black;">Bills</q-item-section>
         </q-item>
-        <q-item clickable to="/income" >
+        <q-item clickable to="/income/list" >
           <q-item-section avatar>
             <q-icon name="money" color="black" />
           </q-item-section>
