@@ -32,9 +32,11 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "axios": "^0.24.0",
+    "chart.js": "^3.7.0",
     "core-js": "^3.6.5",
     "pinia": "^2.0.9",
-    "quasar": "^2.0.0"
+    "quasar": "^2.0.0",
+    "vue-chartjs": "^3.5.1"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",

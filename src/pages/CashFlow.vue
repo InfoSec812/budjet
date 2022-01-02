@@ -9,18 +9,26 @@
       <q-input v-model="startDate" type="date" label="Start Date" />
       <q-input v-model="endDate" type="date" label="End Date" />
     </div>
+    <line-chart :chart-data="cashflow" />
   </q-page>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import LineChart from 'src/components/LineChart';
 import { date } from 'quasar';
+import { CashflowApi } from 'src/sdk';
 
 const { addToDate } = date;
 
 export default defineComponent({
-  // name: 'PageName'
-  setup() {
+  name: 'CashFlow',
+  components: {
+    LineChart
+  },
+  async setup(ctx) {
+    const cashFlowAPI = new CashflowApi();
+
     const startingBalance = ref(0.0);
 
     const startDate = ref(addToDate(new Date, { months: -1 }));
