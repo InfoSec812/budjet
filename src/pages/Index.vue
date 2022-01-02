@@ -172,7 +172,7 @@ $column-highlight: #E7F1FA
     z-index: 1
     background-color: $header-color
     max-width: 7rem
-    min-width: 7rem
+    min-width: 4rem
   thead tr:first-child th
     top: 0
 
@@ -187,6 +187,7 @@ $column-highlight: #E7F1FA
     min-width: $amt-width
     max-width: $amt-width
     position: sticky
+    text-align: right
     z-index: 7
     left: $name-width
     resize: none
