@@ -24,6 +24,8 @@ servers:
 tags:
   - name: system
   - name: bills
+  - name: income
+  - name: cashflow
 paths:
   /user/current:
     get:
@@ -298,6 +300,44 @@ paths:
         schema:
           type: string
           format: uuid
+  /cashflow:
+    get:
+      operationId: getCashFlow
+      description: Get the cashflow information for the next few weeks given a starting balance
+      tags:
+      - cashflow
+      parameters:
+        - in: query
+          required: false
+          name: start_date
+          schema:
+            type: string
+            format: date
+        - in: query
+          required: false
+          name: end_date
+          schema:
+            type: string
+            format: date
+        - in: query
+          required: false
+          name: startingBalance
+          schema:
+            type: number
+            multipleOf: 0.01
+            default: 0.00
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DailyBalance'
+        default:
+          $ref: '#/components/responses/Error'
+        
   /health:
     get:
       operationId: checkHealth
@@ -480,3 +520,17 @@ components:
       - id
       allOf:
         - $ref: '#/components/schemas/NewIncome'
+    DailyBalance:
+      type: object
+      properties:
+        balance:
+          type: number
+          multipleOf: 0.01
+        income:
+          type: array
+          items:
+            $ref: '#/components/schemas/Income'
+        expenditures:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bill'
