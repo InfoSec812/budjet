@@ -522,7 +522,13 @@ components:
         - $ref: '#/components/schemas/NewIncome'
     DailyBalance:
       type: object
+      required:
+      - date
+      - balance
       properties:
+        date:
+          type: string
+          format: date
         balance:
           type: number
           multipleOf: 0.01
