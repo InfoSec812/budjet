@@ -44,7 +44,8 @@
       "octref.vetur",
       "ms-vscode.vscode-typescript-next",
       "oderwat.indent-rainbow",
-      "2gua.rainbow-brackets"
+      "2gua.rainbow-brackets",
+      "eamodio.gitlens"
     ],
   
     // Use 'forwardPorts' to make a list of ports inside the container available locally.

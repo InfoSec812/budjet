@@ -31,6 +31,7 @@ module.exports = configure((ctx) => ({
   // https://quasar.dev/quasar-cli/boot-files
   boot: [
     'pinia.ts',
+    'highcharts.ts'
   ],
 
   // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
