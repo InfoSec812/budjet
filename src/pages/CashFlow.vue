@@ -29,11 +29,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, Ref } from 'vue';
 import { date, useQuasar, debounce } from 'quasar';
 
-import { Chart } from 'highcharts-vue';
-import { PointOptionsObject } from 'highcharts';
+import { Chart, ChartOptions } from 'highcharts-vue';
+import  Highcharts, { PointOptionsObject } from 'highcharts';
 import { CashflowApi } from 'src/sdk';
 
 const { addToDate, formatDate } = date;
@@ -66,11 +66,21 @@ export default defineComponent({
     };
 
     const chartOptions = ref({
+      chart: {
+        animation: false,
+      },
       xAxis: [{
         labels: {
           rotation: -75
         },
       }],
+      plotOptions: {
+        series: {
+          animation: {
+            duration: 500,
+          },
+        },
+      },
       series: [{
         type: 'area',
         color: '#000000',
@@ -86,7 +96,7 @@ export default defineComponent({
           formatDate(endDate.value, 'YYYY-MM-DD'),
           startingBalance.value
         );
-        if (data.length > 0) {
+        if (data.length > 0 && chartOptions.value?.series && chartOptions.value?.series.length > 0) {
           chartOptions.value.series[0].data = data.map((day) => ({ y: day.balance, name: formatDate(day.date, 'YYYY-MM-DD') }));
         }
       } catch (err) {
