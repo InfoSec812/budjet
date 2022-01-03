@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title class="title-area">
-          <img src="/BudJet.svg" class="logo" /><b>BudJet</b> <i>Make Your Money Fly Further</i>
+          <img src="/BudJet.svg" class="title-logo" /><b>BudJet</b> <i>Make Your Money Fly Further</i>
         </q-toolbar-title>
 
         <q-btn-dropdown 
@@ -41,6 +41,11 @@
       bordered
     >
       <q-list>
+        <q-item>
+          <q-item-section style="margin: auto;">
+            <img class="drawer-logo" src="/BudJet.svg" />
+          </q-item-section>
+        </q-item>
         <q-item clickable to="/" >
           <q-item-section avatar>
             <q-icon name="grid_on" color="black" />
@@ -101,9 +106,12 @@ export default defineComponent({
   justify-content: flex-start center
   align-items: center
 
-.logo
-  height: 1.7rem
+.title-logo
+  height: 2.7rem
   padding-right: 0.5rem
+
+.drawer-logo
+  width: 17rem
 
 i
   font-size: 0.8rem
