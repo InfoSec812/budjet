@@ -29,12 +29,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, Ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { date, useQuasar, debounce } from 'quasar';
 
-import { Chart, ChartOptions } from 'highcharts-vue';
-import  Highcharts, { PointOptionsObject } from 'highcharts';
+import { Chart } from 'highcharts-vue';
+import { PointOptionsObject } from 'highcharts';
 import { CashflowApi } from 'src/sdk';
+
+import Highcharts from 'highcharts';
+import exportingInit from 'highcharts/modules/exporting'
+
+exportingInit(Highcharts);
 
 const { addToDate, formatDate } = date;
 
@@ -66,13 +71,24 @@ export default defineComponent({
     };
 
     const chartOptions = ref({
+      exporting: {
+        enabled: true,
+      },
       chart: {
-        animation: false,
+        animation: {
+          duration: 300,
+        },
+        height: 700,
       },
       xAxis: [{
+        categories: [] as string[],
         labels: {
-          rotation: -75
+          rotation: -25
         },
+        gridLineWidth: 1,
+      }],
+      yAxis: [{
+        gridLineWidth: 1,
       }],
       plotOptions: {
         series: {
@@ -96,8 +112,9 @@ export default defineComponent({
           formatDate(endDate.value, 'YYYY-MM-DD'),
           startingBalance.value
         );
-        if (data.length > 0 && chartOptions.value?.series && chartOptions.value?.series.length > 0) {
-          chartOptions.value.series[0].data = data.map((day) => ({ y: day.balance, name: formatDate(day.date, 'YYYY-MM-DD') }));
+        if (data.length > 0 && chartOptions.value.xAxis[0]?.categories && chartOptions.value?.series && chartOptions.value?.series.length > 0) {
+          chartOptions.value.series[0].data = data.map((day) => ({ y: day.balance }));
+          chartOptions.value.xAxis[0].categories = data.map((day) => formatDate(day.date, 'YYYY-MM-DD'));
         }
       } catch (err) {
         console.log(`update error: ${JSON.stringify(err)}`);
