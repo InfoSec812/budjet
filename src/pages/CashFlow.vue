@@ -1,12 +1,13 @@
 <template>
-  <q-page padding>
-    <div class="flex q-md-pa padding">
+  <div class="flex" style="height: 100%;">
+    <div class="fit row no-wrap justify-center items-start content-start">
       <q-input
         v-model.number="startingBalance"
         label="Starting Balance"
         :prefix="currencySymbol()"
         style="padding-right: 1.2rem"
         @change="debounceInput"
+        class="col"
       />
       <q-input
         v-model="startDate"
@@ -14,6 +15,7 @@
         label="Start Date"
         style="padding-right: 1.2rem"
         @change="debounceInput"
+        class="col"
       />
       <q-input
         v-model="endDate"
@@ -21,11 +23,14 @@
         label="End Date"
         style="padding-right: 1.2rem"
         @change="debounceInput"
+        class="col"
       />
-      <q-btn icon="refresh" @click="updateData" flat dense />
+      <q-btn icon="refresh" @click="updateData" flat dense class="col-shrink"/>
     </div>
-    <highcharts :options="chartOptions"/>
-  </q-page>
+    <div class="fit row justify-evenly items-stretch content-stretch" style="height: 100%;" ref="chartContainer">
+      <highcharts :options="chartOptions" class="col-grow"/>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -49,6 +54,7 @@ export default defineComponent({
   },
   async setup() {
     const $q = useQuasar();
+    const chartContainer = ref(null);
     const api = new CashflowApi();
     const startingBalance = ref(0.0);
 
@@ -71,6 +77,9 @@ export default defineComponent({
     };
 
     const chartOptions = ref({
+      title: {
+        text: 'Cash Flow',
+      },
       exporting: {
         enabled: true,
       },
@@ -83,7 +92,10 @@ export default defineComponent({
       xAxis: [{
         categories: [] as string[],
         labels: {
-          rotation: -25
+          rotation: -65,
+          style: {
+            fontSize: '0.9rem',
+          },
         },
         gridLineWidth: 1,
       }],
@@ -98,6 +110,7 @@ export default defineComponent({
         },
       },
       series: [{
+        name: 'Balances',
         type: 'area',
         color: '#000000',
         negativeColor: '#FF0000',
@@ -135,7 +148,15 @@ export default defineComponent({
       chartOptions,
       debounceInput,
       updateData,
+      chartContainer,
     };
   },
 });
 </script>
+
+<style lang="sass">
+.fill-chart
+  flex: 1
+  margin: auto
+
+</style>
