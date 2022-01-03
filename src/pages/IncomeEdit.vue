@@ -16,6 +16,25 @@
         :rules="[(val) => Number.isFinite(val)]"
         :prefix="currencySymbol()"
       />
+      <q-select 
+        v-model="currentIncome.period"
+        label="Period/Frequency"
+        :options="periodOptions"
+        map-options
+        emit-value
+      />
+      <q-input 
+        v-model="currentIncome.start_date"
+        hint="Start date or the date of your most recent paycheck"
+        v-if="isNotOnce"
+        type="date"
+      />
+      <q-input 
+        v-model="currentIncome.end_date"
+        hint="End Date (Optional)"
+        v-if="isNotOnce"
+        type="date"
+      />
       <div>
         <q-btn label="Submit" type="submit" color="primary" />
         <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
@@ -25,10 +44,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, Ref } from 'vue';
-import { Income, NewIncome } from 'src/sdk';
+import { defineComponent, ref, Ref, computed } from 'vue';
+import { Income, NewIncome, NewIncomePeriodEnum } from 'src/sdk';
 import { incomeStore } from 'src/stores/IncomeStore';
 import { useRouter } from 'vue-router';
+import { format } from 'quasar';
+
+const { capitalize } = format;
+
+const PERIOD_LIST = 'once,weekly,biweekly,semimonthly,monthly,quarterly,semianually,annually';
 
 export default defineComponent({
   name: 'IncomeEdit',
@@ -46,7 +70,7 @@ export default defineComponent({
       void incomes.loadIncomes();
     }
 
-    let initIncome: Income | undefined = {} as Income;
+    let initIncome: Income | undefined = { period: NewIncomePeriodEnum.Once } as NewIncome;
 
     if (props?.incomeId) {
       initIncome = await incomes.getIncomeById(props.incomeId);
@@ -89,12 +113,24 @@ export default defineComponent({
 
     reset();
 
+    const periodOptions = computed(() => {
+      return PERIOD_LIST
+                .split(',')
+                .map((item) => ({ label: capitalize(item), value: item }));
+    });
+
+    const isNotOnce = computed((): boolean => {
+      return (currentIncome.value.period !== NewIncomePeriodEnum.Once);
+    });
+
     return {
       currentIncome,
       currencySymbol,
       currencyOptions: ['USD', 'GBP', 'EUR'],
       reset,
       submit,
+      periodOptions,
+      isNotOnce,
     };
   },
 });

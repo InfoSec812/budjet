@@ -493,6 +493,7 @@ components:
         period:
           type: string
           enum:
+          - once
           - weekly
           - biweekly
           - semimonthly

@@ -1,6 +1,6 @@
 <template>
   <div class="flex" style="height: 100%;">
-    <div class="fit row no-wrap justify-center items-start content-start">
+    <div class="fit row input-row wrap justify-start items-start content-start">
       <q-input
         v-model.number="startingBalance"
         label="Starting Balance"
@@ -27,7 +27,7 @@
       />
       <q-btn icon="refresh" @click="updateData" flat dense class="col-shrink"/>
     </div>
-    <div class="fit row justify-evenly items-stretch content-stretch" style="height: 100%;" ref="chartContainer">
+    <div class="fit row no-wrap chart-row justify-evenly items-stretch content-stretch" ref="chartContainer">
       <highcharts :options="chartOptions" class="col-grow"/>
     </div>
   </div>
@@ -38,7 +38,7 @@ import { defineComponent, ref } from 'vue';
 import { date, useQuasar, debounce } from 'quasar';
 
 import { Chart } from 'highcharts-vue';
-import { PointOptionsObject } from 'highcharts';
+import { PlotOptions, PointOptionsObject, SeriesAreaOptions, YAxisOptions, XAxisOptions, ChartOptions, TitleOptions, ExportingOptions } from 'highcharts';
 import { CashflowApi } from 'src/sdk';
 
 import Highcharts from 'highcharts';
@@ -79,16 +79,19 @@ export default defineComponent({
     const chartOptions = ref({
       title: {
         text: 'Cash Flow',
-      },
+        style: {
+          fontSize: '1.6rem',
+          fontWeight: 'bold',
+        },
+      } as TitleOptions,
       exporting: {
         enabled: true,
-      },
+      } as ExportingOptions,
       chart: {
         animation: {
           duration: 300,
         },
-        height: 700,
-      },
+      } as ChartOptions,
       xAxis: [{
         categories: [] as string[],
         labels: {
@@ -98,24 +101,24 @@ export default defineComponent({
           },
         },
         gridLineWidth: 1,
-      }],
+      }] as XAxisOptions[],
       yAxis: [{
         gridLineWidth: 1,
-      }],
+      }] as YAxisOptions[],
       plotOptions: {
         series: {
           animation: {
             duration: 500,
           },
         },
-      },
+      } as PlotOptions,
       series: [{
         name: 'Balances',
         type: 'area',
         color: '#000000',
         negativeColor: '#FF0000',
         data: [] as PointOptionsObject[]
-      }]
+      }] as SeriesAreaOptions[]
     });
 
     const updateData = async () => {
@@ -155,8 +158,12 @@ export default defineComponent({
 </script>
 
 <style lang="sass">
-.fill-chart
-  flex: 1
-  margin: auto
+.input-row
+  padding: 0.9rem !important
+  max-height: 10vh
 
+.chart-row
+  min-height: 70vh
+  max-height: 95vh
+  margin: auto
 </style>

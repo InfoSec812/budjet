@@ -11,8 +11,8 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title>
-          Quasar App
+        <q-toolbar-title class="title-area">
+          <img src="/BudJet.svg" class="logo" /><b>BudJet</b> <i>Make Your Money Fly Further</i>
         </q-toolbar-title>
 
         <q-btn-dropdown 
@@ -93,3 +93,19 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="sass" scoped>
+.title-area
+  display: flex
+  flex
+  justify-content: flex-start center
+  align-items: center
+
+.logo
+  height: 1.7rem
+  padding-right: 0.5rem
+
+i
+  font-size: 0.8rem
+  padding-left: 0.8rem
+</style>
