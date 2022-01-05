@@ -37,22 +37,22 @@
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue';
 import { dom } from 'quasar';
-import { incomeStore } from 'src/stores/IncomeStore';
+import { unifiedStore } from 'src/stores/UnifiedStore';
 
 const { height, width } = dom;
 
 export default defineComponent(() => {
   const gridContainer = ref<Element>()
-  const incomes = incomeStore();
+  const api = unifiedStore();
 
   /**
    * Load the list of incomes from the API
    */
   function loadIncome() {
-    void incomes.loadIncomes();
+    void api.loadIncomes();
   }
 
-  if (incomes.incomesList === undefined || incomes.incomesList === null || incomes.incomesList.length < 1) {
+  if (api.incomesList === undefined || api.incomesList === null || api.incomesList.length < 1) {
     loadIncome();
   }
 
@@ -66,7 +66,7 @@ export default defineComponent(() => {
   }
 
   return {
-    rows: computed(() => incomes.incomesList),
+    rows: computed(() => api.incomesList),
     reload: loadIncome,
     moneyFormat,
     tableDimensions: computed(() => {

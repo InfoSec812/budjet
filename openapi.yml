@@ -26,12 +26,14 @@ tags:
   - name: bills
   - name: income
   - name: cashflow
+  - name: BudJet
 paths:
   /user/current:
     get:
       description: Get the currently logged in user
       operationId: getCurrentUser
       tags:
+      - BudJet
       - system
       responses:
         '200':
@@ -47,6 +49,7 @@ paths:
       # security:
       #   - Keycloak: ['view', 'edit', 'admin']
       tags:
+      - BudJet
       - bills
       responses:
         '200':
@@ -81,6 +84,7 @@ paths:
       # security:
       #   - Keycloak: ['edit', 'admin']
       tags:
+      - BudJet
       - bills
       requestBody:
         content:
@@ -101,6 +105,7 @@ paths:
       operationId: getDueBills
       description: Returns Bills along with Month information for due dates
       tags:
+      - BudJet
       - bills
       responses:
         '200':
@@ -118,6 +123,7 @@ paths:
       # security:
       #   - Keycloak: ['view', 'edit', 'admin']
       tags:
+      - BudJet
       - bills
       responses:
         '200':
@@ -134,6 +140,7 @@ paths:
       # security:
       #   - Keycloak: ['edit', 'admin']
       tags:
+      - BudJet
       - bills
       requestBody:
         content:
@@ -155,6 +162,7 @@ paths:
       # security:
       #   - Keycloak: ['edit', 'admin']
       tags:
+      - BudJet
       - bills
       responses:
         '204':
@@ -175,6 +183,7 @@ paths:
       # security:
       #   - Keycloak: ['edit', 'admin']
       tags:
+      - BudJet
       - bills
       parameters:
         - in: path
@@ -212,6 +221,7 @@ paths:
       operationId: getIncomeSources
       description: Retrieve a list of income sources
       tags:
+      - BudJet
       - income
       responses:
         '200':
@@ -228,6 +238,7 @@ paths:
       operationId: addIncomeSource
       description: Adds a new income source using the properties of the request body
       tags:
+      - BudJet
       - income
       requestBody:
         content:
@@ -250,6 +261,7 @@ paths:
       # security:
       #   - Keycloak: ['view', 'edit', 'admin']
       tags:
+      - BudJet
       - income
       responses:
         '200':
@@ -266,6 +278,7 @@ paths:
       # security:
       #   - Keycloak: ['edit', 'admin']
       tags:
+      - BudJet
       - income
       requestBody:
         content:
@@ -287,6 +300,7 @@ paths:
       # security:
       #   - Keycloak: ['edit', 'admin']
       tags:
+      - BudJet
       - income
       responses:
         '204':
@@ -305,6 +319,7 @@ paths:
       operationId: getCashFlow
       description: Get the cashflow information for the next few weeks given a starting balance
       tags:
+      - BudJet
       - cashflow
       parameters:
         - in: query
@@ -342,6 +357,7 @@ paths:
     get:
       operationId: checkHealth
       tags:
+      - BudJet
       - system
       responses:
         '200':

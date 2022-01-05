@@ -48,9 +48,9 @@
 <script lang="ts">
 import { defineComponent, ref, Ref, computed } from 'vue';
 import { Income, NewIncome, NewIncomeCurrencyEnum, NewIncomePeriodEnum } from 'src/sdk';
-import { incomeStore } from 'src/stores/IncomeStore';
 import { useRouter } from 'vue-router';
 import { format, date } from 'quasar';
+import { unifiedStore } from 'src/stores/UnifiedStore';
 
 const { formatDate } = date;
 const { capitalize } = format;
@@ -67,7 +67,7 @@ export default defineComponent({
   },
   async setup(props) {
     const router = useRouter();
-    const incomes = incomeStore();
+    const api = unifiedStore();
 
     const maskString = computed(() => {
       const numberFormat = new Intl.NumberFormat(navigator.language, { style: 'currency', currency: currentIncome.value.currency as string });
@@ -99,8 +99,8 @@ export default defineComponent({
       return mask;
     });
 
-    if (incomes.incomesList.length == 0) {
-      void incomes.loadIncomes();
+    if (api.incomesList.length == 0) {
+      void api.loadIncomes();
     }
 
     let initIncome: Income | undefined = {
@@ -111,7 +111,7 @@ export default defineComponent({
     } as NewIncome;
 
     if (props?.incomeId) {
-      initIncome = await incomes.getIncomeById(props.incomeId);
+      initIncome = await api.getIncomeById(props.incomeId);
     }
 
     let currentIncome = {} as Ref<NewIncome>;
@@ -124,14 +124,14 @@ export default defineComponent({
       if (props.incomeId) {
         console.log('ID is set');
         try {
-          await incomes.saveIncome(currentIncome.value);
+          await api.saveIncome(currentIncome.value);
           void router.push('/income/list');
         } finally {
         }
       } else {
         console.log('ID is NOT set');
         try {
-          await incomes.newIncome(currentIncome.value);
+          await api.newIncome(currentIncome.value);
           void router.push('/income/list');
         } finally {
         }

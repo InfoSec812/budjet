@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title class="title-area">
-          <img src="/BudJet.svg" class="title-logo" /><b>BudJet</b> <i>Make Your Money Fly Further</i>
+          <img src="/BudJet.svg" class="title-logo" /><b>BudJet</b> <i>Help Your Money Fly Further</i>
         </q-toolbar-title>
 
         <q-btn-dropdown 
@@ -74,16 +74,15 @@
 </template>
 
 <script lang="ts">
-
-import { sysStore } from 'src/stores/SystemStore';
-import { defineComponent, ref, computed } from 'vue';
+import { unifiedStore } from 'src/stores/UnifiedStore';
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
   name: 'MainLayout',
 
   async setup() {
-    const sys = sysStore();
-    await sys.getCurrentUser();
+    const api = unifiedStore();
+    await api.getCurrentUser();
     const leftDrawerOpen = ref(false);
 
     const toggleLeftDrawer = () => {
@@ -93,7 +92,7 @@ export default defineComponent({
     return {
       leftDrawerOpen,
       toggleLeftDrawer,
-      currentUser: computed(() => sys.currentUser)
+      currentUser: api.currentUser
     };
   },
 });

@@ -43,8 +43,8 @@
 <script lang="ts">
 import { defineComponent, ref, Ref } from 'vue';
 import { Bill, NewBill } from 'src/sdk';
-import { billStore } from 'src/stores/BillStore';
 import { useRouter } from 'vue-router';
+import { unifiedStore } from 'src/stores/UnifiedStore';
 
 export default defineComponent({
   props: {
@@ -55,16 +55,16 @@ export default defineComponent({
   },
   async setup(props) {
     const router = useRouter();
-    const bills = billStore();
+    const api = unifiedStore();
 
-    if (bills.billsList.length == 0) {
-      void bills.loadBills();
+    if (api.billsList.length == 0) {
+      void api.loadBills();
     }
 
     let initBill: Bill | undefined = {} as Bill;
 
     if (props?.id) {
-      initBill = await bills.getBillById(props.id);
+      initBill = await api.getBillById(props.id);
     }
 
     let currentBill = {} as Ref<NewBill>;
@@ -77,14 +77,14 @@ export default defineComponent({
       if (props.id) {
         console.log('ID is set');
         try {
-          await bills.saveBill(currentBill.value);
+          await api.saveBill(currentBill.value);
           void router.push('/');
         } finally {
         }
       } else {
         console.log('ID is NOT set');
         try {
-          await bills.newBill(currentBill.value);
+          await api.newBill(currentBill.value);
           void router.push('/');
         } finally {
         }

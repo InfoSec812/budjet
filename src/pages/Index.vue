@@ -41,20 +41,20 @@
 import { defineComponent, computed, ref } from 'vue';
 import { date, dom } from 'quasar';
 import { Month } from 'src/sdk';
-import { billStore } from 'src/stores/BillStore';
+import { unifiedStore } from 'src/stores/UnifiedStore';
 
 const { formatDate, addToDate } = date;
 const { height, width } = dom;
 
 export default defineComponent(() => {
   const gridContainer = ref<Element>()
-  const bills = billStore();
+  const api = unifiedStore();
 
   /**
    * Load the list of bills from the API
    */
   function loadBills() {
-    void bills.loadBills();
+    void api.loadBills();
   }
 
   /**
@@ -68,7 +68,7 @@ export default defineComponent(() => {
     );
   }
 
-  if (bills.billsList === undefined || bills.billsList === null || bills.billsList.length < 1) {
+  if (api.billsList === undefined || api.billsList === null || api.billsList.length < 1) {
     loadBills();
   }
 
@@ -105,11 +105,11 @@ export default defineComponent(() => {
    * @param month The Month object which we are updating within that bill
    */
   const toggleMonthPaid = (id: string, month: Month): void => {
-    void bills.changePaidStatus(id, month);
+    void api.changePaidStatus(id, month);
   }
 
   return {
-    rows: computed(() => bills.billsList),
+    rows: computed(() => api.billsList),
     reload: loadBills,
     months: computed(months),
     monthName,
