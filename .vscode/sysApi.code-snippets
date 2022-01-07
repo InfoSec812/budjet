@@ -266,9 +266,7 @@
       "export default boot(({ app }) => {",
       "  const pinia = createPinia();",
       "",
-      "  pinia.use((context) => {",
-      "    return APIPlugin(context);",
-      "  });",
+      "  pinia.use(APIPlugin);",
       "",
       "  app.use(pinia);",
       "});"
