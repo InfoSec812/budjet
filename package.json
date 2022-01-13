@@ -6,6 +6,7 @@
   "author": "Deven Phillips <deven.phillips@redhat.com>",
   "private": true,
   "scripts": {
+    "build": "quasar build",
     "lint": "eslint --ext .js,.ts,.vue ./",
     "test": "echo \"No test specified\" && exit 0",
     "serve": "yarn; quasar dev",
