@@ -1,7 +1,7 @@
 <template>
   <div class="flex" style="height: 100%;">
     <div class="fit row input-row wrap justify-start items-start content-start">
-      <q-input
+      <QInput
         v-model.number="startingBalance"
         label="Starting Balance"
         :prefix="currencySymbol()"
@@ -9,7 +9,7 @@
         @change="debounceInput"
         class="col"
       />
-      <q-input
+      <QInput
         v-model="startDate"
         type="date"
         label="Start Date"
@@ -17,7 +17,7 @@
         @change="debounceInput"
         class="col"
       />
-      <q-input
+      <QInput
         v-model="endDate"
         type="date"
         label="End Date"
@@ -25,7 +25,7 @@
         @change="debounceInput"
         class="col"
       />
-      <q-btn icon="refresh" @click="updateData" flat dense class="col-shrink"/>
+      <QBtn icon="refresh" @click="updateData" flat dense class="col-shrink"/>
     </div>
     <div class="fit row no-wrap chart-row justify-evenly items-stretch content-stretch" ref="chartContainer">
       <highcharts :options="chartOptions" class="col-grow"/>
@@ -39,7 +39,7 @@ import { date, useQuasar, debounce } from 'quasar';
 
 import { Chart } from 'highcharts-vue';
 import { PlotOptions, PointOptionsObject, SeriesAreaOptions, YAxisOptions, XAxisOptions, ChartOptions, TitleOptions, ExportingOptions } from 'highcharts';
-import { CashflowApi } from 'src/sdk';
+import { CashflowApi } from '../sdk';
 
 import Highcharts from 'highcharts';
 import exportingInit from 'highcharts/modules/exporting'

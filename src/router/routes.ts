@@ -1,14 +1,14 @@
 import { RouteRecordRaw } from 'vue-router';
-import Index from 'src/pages/Index.vue';
-import EditBill from 'src/pages/EditBill.vue';
-import IncomeEdit from 'src/pages/IncomeEdit.vue';
-import IncomeList from 'src/pages/IncomeList.vue';
-import CashFlow from 'src/pages/CashFlow.vue';
+import EditBill from '../pages/EditBill.vue';
+import Index from '../pages/Index.vue';
+import IncomeList from '../pages/IncomeList.vue';
+import IncomeEdit from '../pages/IncomeEdit.vue';
+import CashFlow from '../pages/CashFlow.vue';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import('../layouts/MainLayout.vue'),
     children: [
       { path: '', component: Index },
       { path: '/bill/add', component: EditBill },
@@ -24,7 +24,7 @@ const routes: RouteRecordRaw[] = [
   // but you can also remove it
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/Error404.vue'),
+    component: () => import('../pages/Error404.vue'),
   },
 ];
 

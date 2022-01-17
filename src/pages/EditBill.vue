@@ -42,9 +42,9 @@
 
 <script lang="ts">
 import { defineComponent, ref, Ref } from 'vue';
-import { Bill, NewBill } from 'src/sdk';
+import { Bill, NewBill } from '../sdk';
 import { useRouter } from 'vue-router';
-import { unifiedStore } from 'src/stores/UnifiedStore';
+import { unifiedStore } from '../stores/UnifiedStore';
 
 export default defineComponent({
   props: {

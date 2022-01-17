@@ -1,6 +1,6 @@
 import { PiniaPluginContext, StateTree, DefineStoreOptions } from 'pinia';
 import { LoadingBar, QVueGlobals, useQuasar } from 'quasar';
-import {  BudJetApi, Configuration } from 'src/sdk';
+import {  BudJetApi, Configuration } from '../sdk';
 
 // Extend pinia with new attributes which allow us to attach our API Clients
 declare module 'pinia' {

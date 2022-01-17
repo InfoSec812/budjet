@@ -1,6 +1,6 @@
 <template>
   <div class="flex q-pa-md grid-container">
-    <q-table
+    <QTable
       title="Bills"
       class="sticky-table-elements col-grow"
       :rows="rows"
@@ -8,124 +8,115 @@
       :style="tableDimensions"
       >
       <template v-slot:top>
-        Bills <q-btn icon="refresh" @click="reload" flat dense/>
+        Bills <QBtn icon="refresh" @click="reload" flat dense/>
       </template>
       <template v-slot:header>
-        <q-tr>
-          <q-th>Name</q-th>
-          <q-th>Amount</q-th>
-          <q-th>Due</q-th>
-          <q-th v-for="(month, index) in months" :key="index">{{ month }}</q-th>
-        </q-tr>
+        <QTr>
+          <QTh>Name</QTh>
+          <QTh>Amount</QTh>
+          <QTh>Due</QTh>
+          <QTh v-for="(month, index) in months()" :key="index">{{ month }}</QTh>
+        </QTr>
       </template>
       <template v-slot:body="props">
-        <q-tr>
-          <q-td>
-            <q-btn icon="edit" :to="`/bill/edit/${props.row.id}`" dense flat />
-            <a :href="props.row.link" target="_blank">{{ props.row.name }}</a></q-td>
-          <q-td>{{ moneyFormat(props.row.amount, props.row.currency) }}</q-td>
-          <q-td>{{ props.row.due_date }}</q-td>
-          <q-td v-for="(month, index) in props.row.months" :key="index" style="text-align: center;">
-            <q-checkbox v-model="month.paid" @click="toggleMonthPaid(props.row.id, month)" />
-          </q-td>
-        </q-tr>
+        <QTr>
+          <QTd>
+            <QBtn icon="edit" :to="`/bill/edit/${props.row.id}`" dense flat />
+            <a :href="props.row.link" target="_blank">{{ props.row.name }}</a></QTd>
+          <QTd>{{ moneyFormat(props.row.amount, props.row.currency) }}</QTd>
+          <QTd>{{ props.row.due_date }}</QTd>
+          <QTd v-for="(month, index) in props.row.months" :key="index" style="text-align: center;">
+            <QCheckbox v-model="month.paid" @click="toggleMonthPaid(props.row.id, month)" />
+          </QTd>
+        </QTr>
       </template>
-    </q-table>
-    <q-page-sticky position="bottom-right" :offset="[8, 8]">
-      <q-btn fab icon="add" color="accent" to="/bill/add" />
-    </q-page-sticky>
+    </QTable>
+    <QPageSticky position="bottom-right" :offset="[8, 8]">
+      <QBtn fab icon="add" color="accent" to="/bill/add" />
+    </QPageSticky>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, computed, ref } from 'vue';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
 import { date, dom } from 'quasar';
-import { Month } from 'src/sdk';
-import { unifiedStore } from 'src/stores/UnifiedStore';
+import { Month } from '../sdk';
+import { unifiedStore } from '../stores/UnifiedStore';
 
 const { formatDate, addToDate } = date;
 const { height, width } = dom;
 
-export default defineComponent(() => {
-  const gridContainer = ref<Element>()
-  const api = unifiedStore();
+const gridContainer = ref<Element>()
+const api = unifiedStore();
 
-  /**
-   * Load the list of bills from the API
-   */
-  function loadBills() {
-    void api.loadBills();
+/**
+ * Load the list of bills from the API
+ */
+function reload() {
+  void api.loadBills();
+}
+
+/**
+ * Convert the numeric month number to the short month name
+ * @param num Numeric month ID
+ */
+const monthName = (num = 0): string => {
+  return formatDate(
+    addToDate(new Date(), { months: num }),
+    'MMM'
+  );
+}
+
+if (api.billsList === undefined || api.billsList === null || api.billsList.length < 1) {
+  reload();
+}
+
+/**
+ * Get the list of months from the first bill
+ */
+const months = (offset = 0): string[] => {
+
+  const startMonth = new Date();
+  startMonth.setMonth(startMonth.getMonth() + offset);
+
+  const retVal: string[] = [];
+  for (let i = 0; i < 10; i++) {
+    const iterDate = new Date();
+    iterDate.setMonth(startMonth.getMonth() + i);
+    const twoDigitYear = `${iterDate.getFullYear()}`.substring(2);
+    retVal.push(`${monthName(iterDate.getMonth())} ${twoDigitYear}`)
   }
+  return retVal;
+}
 
-  /**
-   * Convert the numeric month number to the short month name
-   * @param num Numeric month ID
-   */
-  const monthName = (num = 0): string => {
-    return formatDate(
-      addToDate(new Date(), { months: num }),
-      'MMM'
-    );
+/**
+ * Format monetary values according to the browser's locale information
+ * @param value The numeric value to be formatted
+ * @param currency The type of currency to be formatting ('USD', 'GBP', 'EUR' for now)
+ */
+const moneyFormat = (value: number, currency = 'USD'): string => {
+  return new Intl.NumberFormat(navigator.language, { style: 'currency', currency, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)
+}
+
+/**
+ * Change the paid status of a bill for a given month
+ * @param id The id of the Bill for which we are updating the status
+ * @param month The Month object which we are updating within that bill
+ */
+const toggleMonthPaid = (id: string, month: Month): void => {
+  void api.changePaidStatus(id, month);
+}
+
+const rows = computed(() => api.billsList);
+const tableDimensions = computed(() => {
+  let retVal = '';
+  if (gridContainer?.value) {
+    const tableHeight = height(gridContainer?.value) - 5;
+    const tableWidth = width(gridContainer?.value) - 5;
+    retVal = `width: ${tableWidth}px; height: ${tableHeight}px;`
   }
-
-  if (api.billsList === undefined || api.billsList === null || api.billsList.length < 1) {
-    loadBills();
-  }
-
-  /**
-   * Get the list of months from the first bill
-   */
-  const months = (offset = 0): string[] => {
-
-    const startMonth = new Date();
-    startMonth.setMonth(startMonth.getMonth() + offset);
-
-    const retVal: string[] = [];
-    for (let i = 0; i < 10; i++) {
-      const iterDate = new Date();
-      iterDate.setMonth(startMonth.getMonth() + i);
-      const twoDigitYear = `${iterDate.getFullYear()}`.substring(2);
-      retVal.push(`${monthName(iterDate.getMonth())} ${twoDigitYear}`)
-    }
-    return retVal;
-  }
-
-  /**
-   * Format monetary values according to the browser's locale information
-   * @param value The numeric value to be formatted
-   * @param currency The type of currency to be formatting ('USD', 'GBP', 'EUR' for now)
-   */
-  const moneyFormat = (value: number, currency = 'USD'): string => {
-    return new Intl.NumberFormat(navigator.language, { style: 'currency', currency, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)
-  }
-
-  /**
-   * Change the paid status of a bill for a given month
-   * @param id The id of the Bill for which we are updating the status
-   * @param month The Month object which we are updating within that bill
-   */
-  const toggleMonthPaid = (id: string, month: Month): void => {
-    void api.changePaidStatus(id, month);
-  }
-
-  return {
-    rows: computed(() => api.billsList),
-    reload: loadBills,
-    months: computed(months),
-    monthName,
-    moneyFormat,
-    toggleMonthPaid,
-    tableDimensions: computed(() => {
-      let retVal = '';
-      if (gridContainer?.value) {
-        const tableHeight = height(gridContainer?.value) - 5;
-        const tableWidth = width(gridContainer?.value) - 5;
-        retVal = `width: ${tableWidth}px; height: ${tableHeight}px;`
-      }
-      return retVal;
-    })
-  }
-});
+  return retVal;
+})
 </script>
 
 

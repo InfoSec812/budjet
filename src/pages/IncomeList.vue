@@ -37,7 +37,7 @@
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue';
 import { dom } from 'quasar';
-import { unifiedStore } from 'src/stores/UnifiedStore';
+import { unifiedStore } from '../stores/UnifiedStore';
 
 const { height, width } = dom;
 

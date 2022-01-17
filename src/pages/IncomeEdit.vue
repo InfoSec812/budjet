@@ -47,10 +47,10 @@
 
 <script lang="ts">
 import { defineComponent, ref, Ref, computed } from 'vue';
-import { Income, NewIncome, NewIncomeCurrencyEnum, NewIncomePeriodEnum } from 'src/sdk';
+import { Income, NewIncome, NewIncomeCurrencyEnum, NewIncomePeriodEnum } from '../sdk';
 import { useRouter } from 'vue-router';
 import { format, date } from 'quasar';
-import { unifiedStore } from 'src/stores/UnifiedStore';
+import { unifiedStore } from '../stores/UnifiedStore';
 
 const { formatDate } = date;
 const { capitalize } = format;
