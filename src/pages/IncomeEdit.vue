@@ -1,15 +1,15 @@
 <template>
-  <QPage padding>
-    <QForm @submit="submit" @reset="reset" class="q-gutter-md">
-      <QInput v-model="currentIncome.name" label="Name" hint="The name of this income" />
-      <QSelect
+  <q-page padding>
+    <q-form @submit="submit" @reset="reset" class="q-gutter-md">
+      <q-input v-model="currentIncome.name" label="Name" hint="The name of this income" />
+      <q-select
         v-model="currentIncome.currency"
         label="Currency"
         :options="currencyOptions"
         emit-value
         map-options
       />
-      <QInput
+      <q-input
         v-model.number="currentIncome.amount"
         label="Amount"
         hint="The minimum payment amount"
@@ -19,30 +19,30 @@
         :rules="[(val) => Number.isFinite(val)]"
         :prefix="currencySymbol()"
       />
-      <QSelect 
+      <q-select 
         v-model="currentIncome.period"
         label="Period/Frequency"
         :options="periodOptions"
         map-options
         emit-value
       />
-      <QInput 
+      <q-input 
         v-model="currentIncome.start_date"
         hint="Start date or the date of the payment"
         type="date"
       />
-      <QInput 
+      <q-input 
         v-model="currentIncome.end_date"
         hint="End Date (Optional)"
         v-if="isNotOnce"
         type="date"
       />
       <div>
-        <QBtn label="Submit" type="submit" color="primary" />
-        <QBtn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+        <q-btn label="Submit" type="submit" color="primary" />
+        <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
       </div>
-    </QForm>
-  </QPage>
+    </q-form>
+  </q-page>
 </template>
 
 <script lang="ts">

@@ -9,7 +9,7 @@
         Oops. Nothing here...
       </div>
 
-      <QBtn
+      <q-btn
         class="q-mt-xl"
         color="white"
         text-color="blue"

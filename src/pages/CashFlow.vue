@@ -1,7 +1,7 @@
 <template>
   <div class="flex" style="height: 100%;">
     <div class="fit row input-row wrap justify-start items-start content-start">
-      <QInput
+      <q-input
         v-model.number="startingBalance"
         label="Starting Balance"
         :prefix="currencySymbol()"
@@ -9,7 +9,7 @@
         @change="debounceInput"
         class="col"
       />
-      <QInput
+      <q-input
         v-model="startDate"
         type="date"
         label="Start Date"
@@ -17,7 +17,7 @@
         @change="debounceInput"
         class="col"
       />
-      <QInput
+      <q-input
         v-model="endDate"
         type="date"
         label="End Date"
@@ -25,7 +25,7 @@
         @change="debounceInput"
         class="col"
       />
-      <QBtn icon="refresh" @click="updateData" flat dense class="col-shrink"/>
+      <q-btn icon="refresh" @click="updateData" flat dense class="col-shrink"/>
     </div>
     <div class="fit row no-wrap chart-row justify-evenly items-stretch content-stretch" ref="chartContainer">
       <highcharts :options="chartOptions" class="col-grow"/>

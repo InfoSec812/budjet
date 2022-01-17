@@ -1,6 +1,6 @@
 <template>
   <div class="flex q-pa-md grid-container">
-    <QTable
+    <q-table
       title="incomes"
       class="sticky-table-elements col-grow"
       :rows="rows"
@@ -8,29 +8,29 @@
       :style="tableDimensions"
       >
       <template v-slot:top>
-        Income <QBtn icon="refresh" @click="reload" flat dense/>
+        Income <q-btn icon="refresh" @click="reload" flat dense/>
       </template>
       <template v-slot:header>
-        <QTr>
-          <QTh>Name</QTh>
-          <QTh>Amount</QTh>
-          <QTh>Period</QTh>
-        </QTr>
+        <q-tr>
+          <q-th>Name</q-th>
+          <q-th>Amount</q-th>
+          <q-th>Period</q-th>
+        </q-tr>
       </template>
       <template v-slot:body="props">
-        <QTr>
-          <QTd>
-            <QBtn icon="edit" :to="`/income/edit/${props.row.id}`" dense flat></QBtn>
+        <q-tr>
+          <q-td>
+            <q-btn icon="edit" :to="`/income/edit/${props.row.id}`" dense flat></q-btn>
             {{ props.row.name }}
-          </QTd>
-          <QTd>{{ moneyFormat(props.row.amount, props.row.currency) }}</QTd>
-          <QTd>{{ props.row.period }}</QTd>
-        </QTr>
+          </q-td>
+          <q-td>{{ moneyFormat(props.row.amount, props.row.currency) }}</q-td>
+          <q-td>{{ props.row.period }}</q-td>
+        </q-tr>
       </template>
-    </QTable>
-    <QPageSticky position="bottom-right" :offset="[8, 8]">
-      <QBtn fab icon="add" color="accent" to="/income/add" />
-    </QPageSticky>
+    </q-table>
+    <q-page-sticky position="bottom-right" :offset="[8, 8]">
+      <q-btn fab icon="add" color="accent" to="/income/add" />
+    </q-page-sticky>
   </div>
 </template>
 

@@ -1,8 +1,8 @@
 <template>
-  <QLayout view="lHh Lpr lFf" style="height: 100%;">
-    <QHeader elevated>
-      <QToolbar>
-        <QBtn
+  <q-layout view="lHh Lpr lFf" style="height: 100%;">
+    <q-header elevated>
+      <q-toolbar>
+        <q-btn
           flat
           dense
           round
@@ -11,66 +11,66 @@
           @click="toggleLeftDrawer"
         />
 
-        <QToolbarTitle class="title-area">
+        <q-toolbar-title class="title-area">
           <img src="/BudJet.svg" class="title-logo" /><b>BudJet</b> <i>Help Your Money Fly Further</i>
-        </QToolbarTitle>
+        </q-toolbar-title>
 
-        <QBtnDropdown 
+        <q-btn-dropdown
           dropdown-icon="account_circle"
           no-icon-animation flat dense
           :label="currentUser?.name"
           align="right"
           style="width: fit-content;"
           >
-          <QList>
-            <QItem clickable>
-              <QItemSection>Profile</QItemSection>
-              <QItemSection avatar><QIcon name="person_outline" size="1.2rem" style="padding-left: 0.3rem" /></QItemSection>
-            </QItem>
-            <QItem clickable>
-              <QItemSection>Logout</QItemSection>
-              <QItemSection avatar><QIcon name="logout" size="1.2rem" style="padding-left: 0.3rem" /></QItemSection>
-            </QItem>
-          </QList>
-        </QBtnDropdown>
-      </QToolbar>
-    </QHeader>
+          <q-list>
+            <q-item clickable>
+              <q-item-section>Profile</q-item-section>
+              <q-item-section avatar><q-icon name="person_outline" size="1.2rem" style="padding-left: 0.3rem" /></q-item-section>
+            </q-item>
+            <q-item clickable>
+              <q-item-section>Logout</q-item-section>
+              <q-item-section avatar><q-icon name="logout" size="1.2rem" style="padding-left: 0.3rem" /></q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+      </q-toolbar>
+    </q-header>
 
-    <QDrawer
+    <q-drawer
       v-model="leftDrawerOpen"
       bordered
     >
-      <QList>
-        <QItem>
-          <QItemSection style="margin: auto;">
+      <q-list>
+        <q-item>
+          <q-item-section style="margin: auto;">
             <img class="drawer-logo" src="/BudJet.svg" />
-          </QItemSection>
-        </QItem>
-        <QItem clickable to="/" >
-          <QItemSection avatar>
-            <QIcon name="grid_on" color="black" />
-          </QItemSection>
-          <QItemSection style="color: black;">Bills</QItemSection>
-        </QItem>
-        <QItem clickable to="/income/list" >
-          <QItemSection avatar>
-            <QIcon name="money" color="black" />
-          </QItemSection>
-          <QItemSection style="color: black;">Income</QItemSection>
-        </QItem>
-        <QItem clickable to="/cashflow" >
-          <QItemSection avatar>
-            <QIcon name="air" color="black" />
-          </QItemSection>
-          <QItemSection style="color: black;">Cash Flow</QItemSection>
-        </QItem>
-      </QList>
-    </QDrawer>
+          </q-item-section>
+        </q-item>
+        <q-item clickable to="/" >
+          <q-item-section avatar>
+            <q-icon name="grid_on" color="black" />
+          </q-item-section>
+          <q-item-section style="color: black;">Bills</q-item-section>
+        </q-item>
+        <q-item clickable to="/income/list" >
+          <q-item-section avatar>
+            <q-icon name="money" color="black" />
+          </q-item-section>
+          <q-item-section style="color: black;">Income</q-item-section>
+        </q-item>
+        <q-item clickable to="/cashflow" >
+          <q-item-section avatar>
+            <q-icon name="air" color="black" />
+          </q-item-section>
+          <q-item-section style="color: black;">Cash Flow</q-item-section>
+        </q-item>
+      </q-list>
+    </q-drawer>
 
-    <QPageContainer style="height: 100%;">
+    <q-page-container style="height: 100%;">
       <router-view />
-    </QPageContainer>
-  </QLayout>
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script lang="ts">

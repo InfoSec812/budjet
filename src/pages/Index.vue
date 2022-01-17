@@ -1,6 +1,6 @@
 <template>
   <div class="flex q-pa-md grid-container">
-    <QTable
+    <q-table
       title="Bills"
       class="sticky-table-elements col-grow"
       :rows="rows"
@@ -8,32 +8,32 @@
       :style="tableDimensions"
       >
       <template v-slot:top>
-        Bills <QBtn icon="refresh" @click="reload" flat dense/>
+        Bills <q-btn icon="refresh" @click="reload" flat dense/>
       </template>
       <template v-slot:header>
-        <QTr>
-          <QTh>Name</QTh>
-          <QTh>Amount</QTh>
-          <QTh>Due</QTh>
-          <QTh v-for="(month, index) in months()" :key="index">{{ month }}</QTh>
-        </QTr>
+        <q-tr>
+          <q-th>Name</q-th>
+          <q-th>Amount</q-th>
+          <q-th>Due</q-th>
+          <q-th v-for="(month, index) in months()" :key="index">{{ month }}</q-th>
+        </q-tr>
       </template>
       <template v-slot:body="props">
-        <QTr>
-          <QTd>
-            <QBtn icon="edit" :to="`/bill/edit/${props.row.id}`" dense flat />
-            <a :href="props.row.link" target="_blank">{{ props.row.name }}</a></QTd>
-          <QTd>{{ moneyFormat(props.row.amount, props.row.currency) }}</QTd>
-          <QTd>{{ props.row.due_date }}</QTd>
-          <QTd v-for="(month, index) in props.row.months" :key="index" style="text-align: center;">
-            <QCheckbox v-model="month.paid" @click="toggleMonthPaid(props.row.id, month)" />
-          </QTd>
-        </QTr>
+        <q-tr>
+          <q-td>
+            <q-btn icon="edit" :to="`/bill/edit/${props.row.id}`" dense flat />
+            <a :href="props.row.link" target="_blank">{{ props.row.name }}</a></q-td>
+          <q-td>{{ moneyFormat(props.row.amount, props.row.currency) }}</q-td>
+          <q-td>{{ props.row.due_date }}</q-td>
+          <q-td v-for="(month, index) in props.row.months" :key="index" style="text-align: center;">
+            <q-checkbox v-model="month.paid" @click="toggleMonthPaid(props.row.id, month)" />
+          </q-td>
+        </q-tr>
       </template>
-    </QTable>
-    <QPageSticky position="bottom-right" :offset="[8, 8]">
-      <QBtn fab icon="add" color="accent" to="/bill/add" />
-    </QPageSticky>
+    </q-table>
+    <q-page-sticky position="bottom-right" :offset="[8, 8]">
+      <q-btn fab icon="add" color="accent" to="/bill/add" />
+    </q-page-sticky>
   </div>
 </template>
 
