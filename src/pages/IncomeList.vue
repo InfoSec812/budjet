@@ -1,6 +1,6 @@
 <template>
   <div class="flex q-pa-md grid-container">
-    <q-table
+    <QTable
       title="incomes"
       class="sticky-table-elements col-grow"
       :rows="rows"
@@ -8,78 +8,72 @@
       :style="tableDimensions"
       >
       <template v-slot:top>
-        Income <q-btn icon="refresh" @click="reload" flat dense/>
+        Income <QBtn icon="refresh" @click="reload" flat dense/>
       </template>
       <template v-slot:header>
-        <q-tr>
-          <q-th>Name</q-th>
-          <q-th>Amount</q-th>
-          <q-th>Period</q-th>
-        </q-tr>
+        <QTr>
+          <QTh>Name</QTh>
+          <QTh>Amount</QTh>
+          <QTh>Period</QTh>
+        </QTr>
       </template>
       <template v-slot:body="props">
-        <q-tr>
-          <q-td>
-            <q-btn icon="edit" :to="`/income/edit/${props.row.id}`" dense flat />
+        <QTr>
+          <QTd>
+            <QBtn icon="edit" :to="`/income/edit/${props.row.id}`" dense flat></QBtn>
             {{ props.row.name }}
-          </q-td>
-          <q-td>{{ moneyFormat(props.row.amount, props.row.currency) }}</q-td>
-          <q-td>{{ props.row.period }}</q-td>
-        </q-tr>
+          </QTd>
+          <QTd>{{ moneyFormat(props.row.amount, props.row.currency) }}</QTd>
+          <QTd>{{ props.row.period }}</QTd>
+        </QTr>
       </template>
-    </q-table>
-    <q-page-sticky position="bottom-right" :offset="[8, 8]">
-      <q-btn fab icon="add" color="accent" to="/income/add" />
-    </q-page-sticky>
+    </QTable>
+    <QPageSticky position="bottom-right" :offset="[8, 8]">
+      <QBtn fab icon="add" color="accent" to="/income/add" />
+    </QPageSticky>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, computed, ref } from 'vue';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
 import { dom } from 'quasar';
 import { unifiedStore } from '../stores/UnifiedStore';
 
 const { height, width } = dom;
 
-export default defineComponent(() => {
-  const gridContainer = ref<Element>()
-  const api = unifiedStore();
+const gridContainer = ref<Element>();
+const api = unifiedStore();
 
-  /**
-   * Load the list of incomes from the API
-   */
-  function loadIncome() {
-    void api.loadIncomes();
-  }
+/**
+ * Load the list of incomes from the API
+ */
+function reload() {
+  void api.loadIncomes();
+}
 
-  if (api.incomesList === undefined || api.incomesList === null || api.incomesList.length < 1) {
-    loadIncome();
-  }
+if (api.incomesList === undefined || api.incomesList === null || api.incomesList.length < 1) {
+  reload();
+}
 
-  /**
-   * Format monetary values according to the browser's locale information
-   * @param value The numeric value to be formatted
-   * @param currency The type of currency to be formatting ('USD', 'GBP', 'EUR' for now)
-   */
-  const moneyFormat = (value: number, currency = 'USD'): string => {
-    return new Intl.NumberFormat(navigator.language, { style: 'currency', currency, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)
-  }
+/**
+ * Format monetary values according to the browser's locale information
+ * @param value The numeric value to be formatted
+ * @param currency The type of currency to be formatting ('USD', 'GBP', 'EUR' for now)
+ */
+const moneyFormat = (value: number, currency = 'USD'): string => {
+  return new Intl.NumberFormat(navigator.language, { style: 'currency', currency, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)
+}
 
-  return {
-    rows: computed(() => api.incomesList),
-    reload: loadIncome,
-    moneyFormat,
-    tableDimensions: computed(() => {
-      let retVal = '';
-      if (gridContainer?.value) {
-        const tableHeight = height(gridContainer?.value) - 5;
-        const tableWidth = width(gridContainer?.value) - 5;
-        retVal = `width: ${tableWidth}px; height: ${tableHeight}px;`
-      }
-      return retVal;
-    })
-  }
-});
+const rows = computed(() => api.incomesList);
+const tableDimensions = computed(() => {
+    let retVal = '';
+    if (gridContainer?.value) {
+      const tableHeight = height(gridContainer?.value) - 5;
+      const tableWidth = width(gridContainer?.value) - 5;
+      retVal = `width: ${tableWidth}px; height: ${tableHeight}px;`
+    }
+    return retVal;
+  });
 </script>
 
 
@@ -107,7 +101,7 @@ $column-highlight: #E7F1FA
   bottom: 20px
   padding: 0px
 
-  & .q-table
+  & .QTable
     padding: 0px
     table-layout: fixed
 
@@ -115,8 +109,8 @@ $column-highlight: #E7F1FA
     white-space: nowrap !important
     overflow: ellipsis !important
 
-  .q-table__top,
-  .q-table__bottom,
+  .QTable__top,
+  .QTable__bottom,
   thead tr:first-child th
     /* bg color is important for th; just specify one */
     background-color: $header-color
@@ -198,7 +192,7 @@ $column-highlight: #E7F1FA
     text-align: center !important
 
   /* this is when the loading indicator appears */
-  &.q-table--loading thead tr:last-child th
+  &.QTable--loading thead tr:last-child th
     /* height of all previous header rows */
     top: 48px
 </style>

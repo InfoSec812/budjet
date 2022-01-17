@@ -41,6 +41,7 @@ app.use(Quasar, {
       }, // default set of options for Notify Quasar plugin
       loadingBar: {
         position: 'bottom',
+        size: '0.7rem',
       },
     /*
       brand: {
