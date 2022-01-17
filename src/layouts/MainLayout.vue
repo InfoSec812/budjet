@@ -101,7 +101,6 @@ export default defineComponent({
 <style lang="sass" scoped>
 .title-area
   display: flex
-  flex
   justify-content: flex-start center
   align-items: center
 
