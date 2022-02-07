@@ -134,7 +134,7 @@ TIP: This is a reasonable start for any new REST API contract
 <3> When any of the core framework files change, restart the development web server
 
 [IMPORTANT]
-*What did I just accomplish?
+What did I just accomplish?
 ====
 You have just created a new project using the https://quasar.dev/[Quasar] framework for https://v3.vuejs.org/[VueJS]. You also added tooling which will allow you to both create a Mock API server (using Prism) but also generate the code which allows you to talk to that API automatically. As we proceed, you will see that when we need a new data type or new API method, we can quickly add it to the `openapi.yml` file and the `npm-watch` tool will automatically regenerate the necessary code and restart the necessary services.
 ====
