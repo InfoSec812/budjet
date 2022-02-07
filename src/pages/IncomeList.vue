@@ -8,7 +8,10 @@
       :style="tableDimensions"
       >
       <template v-slot:top>
-        Income <q-btn icon="refresh" @click="reload" flat dense/>
+        Income
+        <q-input v-model="startDate" type="date" hint="Starting date" style="padding-left: 0.8rem;" />
+        <q-input v-model="endDate" type="date" hint="Ending date" style="padding-left: 0.8rem;" />
+        <q-btn icon="refresh" @click="reload" flat dense/>
       </template>
       <template v-slot:header>
         <q-tr>
@@ -38,17 +41,22 @@
 import { computed, ref } from 'vue';
 import { dom } from 'quasar';
 import { unifiedStore } from '../stores/UnifiedStore';
+import { date } from 'quasar';
 
 const { height, width } = dom;
 
 const gridContainer = ref<Element>();
 const api = unifiedStore();
 
+const today = new Date();
+const startDate = date.formatDate(today, 'YYYY-MM-DD');
+const endDate = date.formatDate(date.addToDate(today, { months: 3 }), 'YYYY-MM-DD');
+
 /**
  * Load the list of incomes from the API
  */
 function reload() {
-  void api.loadIncomes();
+  void api.loadIncomes(startDate, endDate);
 }
 
 if (api.incomesList === undefined || api.incomesList === null || api.incomesList.length < 1) {

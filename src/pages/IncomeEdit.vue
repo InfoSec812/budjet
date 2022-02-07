@@ -19,19 +19,19 @@
         :rules="[(val) => Number.isFinite(val)]"
         :prefix="currencySymbol()"
       />
-      <q-select 
+      <q-select
         v-model="currentIncome.period"
         label="Period/Frequency"
         :options="periodOptions"
         map-options
         emit-value
       />
-      <q-input 
+      <q-input
         v-model="currentIncome.start_date"
         hint="Start date or the date of the payment"
         type="date"
       />
-      <q-input 
+      <q-input
         v-model="currentIncome.end_date"
         hint="End Date (Optional)"
         v-if="isNotOnce"
@@ -47,7 +47,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, Ref, computed } from 'vue';
-import { Income, NewIncome, NewIncomeCurrencyEnum, NewIncomePeriodEnum } from '../sdk';
+import { Income, NewIncome, Currency, Period } from '../sdk';
 import { useRouter } from 'vue-router';
 import { format, date } from 'quasar';
 import { unifiedStore } from '../stores/UnifiedStore';
@@ -104,8 +104,8 @@ export default defineComponent({
     }
 
     let initIncome: Income | undefined = {
-      period: NewIncomePeriodEnum.Once,
-      currency: NewIncomeCurrencyEnum.Usd,
+      period: Period.Once,
+      currency: Currency.Usd,
       amount: 0.00,
       start_date: formatDate(new Date(), 'YYYY-MM-DD'),
     } as NewIncome;

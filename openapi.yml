@@ -5,9 +5,14 @@ info:
   version: 1.0.0
   description: My Application
 servers:
-  - url: "http://{domain}:{port}{base_path}"
+  - url: "{proto}://{domain}:{port}{base_path}"
     description: "API URL"
     variables:
+      proto:
+        enum:
+          - http
+          - https
+        default: http
       base_path:
         enum:
           - /
@@ -31,7 +36,9 @@ paths:
   /user/current:
     get:
       description: Get the currently logged in user
+      summary: Get the currently logged in user
       operationId: getCurrentUser
+      x-vertx-event-bus: budjet.system
       tags:
       - BudJet
       - system
@@ -45,7 +52,9 @@ paths:
   /bills:
     get:
       operationId: getAllBills
+      x-vertx-event-bus: budjet.bills
       description: Retrieve an array of all Bills ordered by next due date
+      summary: Retrieve an array of all Bills ordered by next due date
       # security:
       #   - Keycloak: ['view', 'edit', 'admin']
       tags:
@@ -66,6 +75,7 @@ paths:
       parameters:
         - in: query
           name: startDate
+          description: The starting date from which to show bills which are coming due
           schema:
             type: string
             format: date
@@ -73,6 +83,7 @@ paths:
           required: false
         - in: query
           name: endDate
+          description: The end of the period for which to retrieve bills coming due
           schema:
             type: string
             format: date
@@ -80,13 +91,16 @@ paths:
           required: false
     post:
       operationId: addBill
+      x-vertx-event-bus: budjet.bills
       description: Adds a new bill item to the system
+      summary: Adds a new bill item to the system
       # security:
       #   - Keycloak: ['edit', 'admin']
       tags:
       - BudJet
       - bills
       requestBody:
+        description: A NewBill instance to be created
         content:
           application/json:
             schema:
@@ -103,7 +117,9 @@ paths:
   /bills/due:
     get:
       operationId: getDueBills
+      x-vertx-event-bus: budjet.bills
       description: Returns Bills along with Month information for due dates
+      summary: Returns Bills along with Month information for due dates
       tags:
       - BudJet
       - bills
@@ -119,7 +135,9 @@ paths:
   /bill/{id}:
     get:
       operationId: getBill
+      x-vertx-event-bus: budjet.bills
       description: Retrieve the Bill specified by the ID
+      summary: Retrieve the Bill specified by the ID
       # security:
       #   - Keycloak: ['view', 'edit', 'admin']
       tags:
@@ -136,13 +154,16 @@ paths:
           $ref: '#/components/responses/Error'
     put:
       operationId: updateBill
+      x-vertx-event-bus: budjet.bills
       description: Updates the details about a bill item in the system
+      summary: Updates the details about a bill item in the system
       # security:
       #   - Keycloak: ['edit', 'admin']
       tags:
       - BudJet
       - bills
       requestBody:
+        description: The Bill object to update
         content:
           application/json:
             schema:
@@ -158,7 +179,9 @@ paths:
           $ref: '#/components/responses/Error'
     delete:
       operationId: deleteBill
+      x-vertx-event-bus: budjet.bills
       description: Delete the Bill specified by the ID
+      summary: Delete the Bill specified by the ID
       # security:
       #   - Keycloak: ['edit', 'admin']
       tags:
@@ -173,13 +196,16 @@ paths:
       - in: path
         required: true
         name: id
+        description: The ID indicating which Bill to delete
         schema:
           type: string
           format: uuid
   /bill/{id}/{year}/{month}:
     put:
       description: Update the paid status for a given month/year for a given bill ID
+      summary: Update the paid status for a given month/year for a given bill ID
       operationId: updatePaidStatus
+      x-vertx-event-bus: budjet.bills
       # security:
       #   - Keycloak: ['edit', 'admin']
       tags:
@@ -188,24 +214,28 @@ paths:
       parameters:
         - in: path
           name: id
+          description: The ID indicating which Bill to delete
           schema:
             type: string
             format: uuid
           required: true
         - in: path
           name: year
+          description: The year part of the payment being indicated
           schema:
-            type: number
-            format: int64
+            type: integer
+            format: int32
           required: true
         - in: path
           name: month
+          description: The month part of the payment being indicated
           schema:
-            type: number
-            format: int64
+            type: integer
+            format: int32
           required: true
         - in: query
           name: paid
+          description: A boolean indicating the paid status
           schema:
             type: boolean
           required: true
@@ -219,10 +249,29 @@ paths:
   /income:
     get:
       operationId: getIncomeSources
+      x-vertx-event-bus: budjet.income
       description: Retrieve a list of income sources
+      summary: Retrieve a list of income sources
       tags:
       - BudJet
       - income
+      parameters:
+        - in: query
+          name: startDate
+          description: The start of the date range to show income events for
+          schema:
+            type: string
+            format: date
+            nullable: true
+          required: false
+        - in: query
+          name: endDate
+          description: The end of the date range to show income events for
+          schema:
+            type: string
+            format: date
+            nullable: true
+          required: false
       responses:
         '200':
           description: 'OK'
@@ -236,11 +285,14 @@ paths:
           $ref: '#/components/responses/Error'
     post:
       operationId: addIncomeSource
+      x-vertx-event-bus: budjet.income
       description: Adds a new income source using the properties of the request body
+      summary: Adds a new income source using the properties of the request body
       tags:
       - BudJet
       - income
       requestBody:
+        description: A NewIncome item to be created
         content:
           application/json:
             schema:
@@ -257,7 +309,9 @@ paths:
   /income/{id}:
     get:
       operationId: getIncome
+      x-vertx-event-bus: budjet.income
       description: Retrieve the Income specified by the ID
+      summary: Retrieve the Income specified by the ID
       # security:
       #   - Keycloak: ['view', 'edit', 'admin']
       tags:
@@ -274,13 +328,16 @@ paths:
           $ref: '#/components/responses/Error'
     put:
       operationId: updateIncome
+      x-vertx-event-bus: budjet.income
       description: Updates the details about a income item in the system
+      summary: Updates the details about a income item in the system
       # security:
       #   - Keycloak: ['edit', 'admin']
       tags:
       - BudJet
       - income
       requestBody:
+        description: An Income item to be updated
         content:
           application/json:
             schema:
@@ -296,7 +353,9 @@ paths:
           $ref: '#/components/responses/Error'
     delete:
       operationId: deleteIncome
+      x-vertx-event-bus: budjet.income
       description: Delete the Income specified by the ID
+      summary: Delete the Income specified by the ID
       # security:
       #   - Keycloak: ['edit', 'admin']
       tags:
@@ -311,34 +370,43 @@ paths:
       - in: path
         required: true
         name: id
+        description: The ID of the Income object to be targeted
         schema:
           type: string
           format: uuid
   /cashflow:
     get:
       operationId: getCashFlow
+      x-vertx-event-bus: budjet.cashflow
       description: Get the cashflow information for the next few weeks given a starting balance
+      summary: Get the cashflow information for the next few weeks given a starting balance
       tags:
       - BudJet
       - cashflow
       parameters:
         - in: query
-          required: false
-          name: start_date
+          name: startDate
+          description: The start of the date range to show cashflow events for
           schema:
             type: string
             format: date
+            nullable: true
+          required: false
         - in: query
-          required: false
-          name: end_date
+          name: endDate
+          description: The end of the date range to show cashflow events for
           schema:
             type: string
             format: date
+            nullable: true
+          required: false
         - in: query
           required: false
           name: startingBalance
+          description: The starting balance against which cashflow should be calculated
           schema:
             type: number
+            format: float
             multipleOf: 0.01
             default: 0.00
       responses:
@@ -355,7 +423,10 @@ paths:
         
   /health:
     get:
+      description: Check the health of the API Server
+      summary: Check the health of the API Server
       operationId: checkHealth
+      x-vertx-event-bus: budjet.system
       tags:
       - BudJet
       - system
@@ -377,10 +448,33 @@ components:
           schema:
             $ref: '#/components/schemas/Errors'
   schemas:
+    Currency:
+      description: The currency to be used for an item
+      type: string
+      enum:
+        - GBP
+        - USD
+        - EUR
+      default: USD
+    Period:
+      description: An enumeration of period durations
+      type: string
+      enum:
+        - once
+        - weekly
+        - biweekly
+        - semimonthly
+        - monthly
+        - quarterly
+        - semianually
+        - annually
+      default: monthly
     Errors:
+      description: An object for holding errors
       type: object
       required:
         - code
+      additionalProperties: true
       properties:
         timestamp:
           type: string
@@ -388,33 +482,64 @@ components:
         msg:
           type: string
         code:
-          type: number
-          format: int64
+          type: integer
+          format: int32
+          maximum: 599
+          minimum: 0
     Month:
       type: object
+      description: Describes a single payment status for a given bill for a given month and year
+      x-java-class-annotations:
+        - '@javax.persistence.Entity'
+        - '@javax.persistence.Table(name = "months")'
       required:
       - year
       - month
       - day
       - paid
       properties:
+        id:
+          type: string
+          description: A unique identifier for a single payment event
+          format: uuid
+          x-java-field-annotations:
+            - '@javax.persistence.Id'
+            - '@javax.persistence.GeneratedValue(generator = "UUID")'
+            - '@org.hibernate.annotations.GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")'
+            - '@javax.persistence.Column(name = "id", updatable = false, nullable = false)'
+        bill:
+          type: string
+          format: uuid
+          description: Reference to the bill ID for this month status
+          x-java-field-annotations:
+            - '@javax.persistence.Column(name = "bill_id")'
         year:
+          description: The year part of the payment status record
           type: integer
+          format: int32
+          minimum: 1900
+          maximum: 3000
         month:
+          description: The month part of the payment status record
           type: integer
+          format: int32
           minimum: 1
           maximum: 12
           nullable: false
         day:
+          description: The day part of the payment status record
           type: integer
+          format: int32
           minimum: 1
           maximum: 31
         paid:
+          description: The payment status for the indicated time
           type: boolean
           default: false
           nullable: false
     NewBill:
       type: object
+      description: A record not requiring a generated unique ID for a new Bill instance to be created
       required:
         - name
         - amount
@@ -423,49 +548,193 @@ components:
       properties:
         id:
           type: string
+          description: A unique identifier for a Bill
           format: uuid
+          x-java-field-annotations:
+            - '@javax.persistence.Id'
+            - '@javax.persistence.GeneratedValue(generator = "UUID")'
+            - '@org.hibernate.annotations.GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")'
+            - '@javax.persistence.Column(name = "id", updatable = false, nullable = false)'
         name:
           type: string
+          description: The human readable name of this Bill
         amount:
           type: number
           minimum: 0
           maximum: 3000
-          multipleOf: 0.01
         due_date:
+          x-java-field-annotations:
+            - '@javax.persistence.Column(name = "duedate")'
+          description: The day of the month when this bill is due
           type: integer
-          format: int64
+          format: int32
           minimum: 1
           maximum: 31
         late_date:
+          x-java-field-annotations:
+            - '@javax.persistence.Column(name = "latedate")'
           type: integer
-          format: int64
+          description: The number of days after the due date when this bill will be considered late and subject to penalties
+          format: int32
           minimum: 1
           maximum: 31
-        periodicity:
-          type: string
-          enum:
-            - monthly
-            - bimonthly
-            - weekly
-            - quarterly
-            - semiannually
-            - annually
-          default: monthly
+        period:
+          $ref: '#/components/schemas/Period'
         start_date:
+          x-java-field-annotations:
+            - '@javax.persistence.Column(name = "startdate")'
+          description: The date at which this Bill will start being included in cashflow calculations
+          type: string
+          format: date
+        end_date:
+          x-java-field-annotations:
+            - '@javax.persistence.Column(name = "enddate")'
+          description: The date at which this Bill will no longer be included in cashflow calculations
           type: string
           format: date
         link:
           type: string
+          description: A link to a web site where this bill is paid/managed
           format: uri
         currency:
-          type: string
-          enum:
-          - USD
-          - EUR
-          - GBP
-          default: 'USD'
+          $ref: '#/components/schemas/Currency'
     Bill:
       type: object
+      description: A Bill object with a required unique identifier that has been persisted
+      x-java-class-annotations:
+        - '@javax.persistence.Entity'
+        - '@javax.persistence.Table(name = "bills")'
+        - >-
+            @javax.persistence.NamedNativeQueries({
+              @javax.persistence.NamedNativeQuery(
+                name = "getCashFlowForDateRangeAndStartingBalance",
+                query = """
+                  WITH days_in_period AS (
+                      -- Create a series of dates
+                      SELECT CAST(generate_series(CAST(? AS date), CAST(? AS date), CAST('1 day' AS interval)) AS date) as date
+                  ),
+                  dates AS (
+                      -- Using those dates, extract the day/week/month/year parts for later join logic
+                      SELECT
+                          EXTRACT(ISODOW FROM d.date) AS dow,
+                          EXTRACT(DAY FROM d.date) AS dom,
+                          EXTRACT(WEEK FROM d.date) AS week,
+                          EXTRACT(MONTH FROM d.date) AS month,
+                          EXTRACT(YEAR FROM d.date) AS year,
+                          d.date
+                      FROM days_in_period d
+                  ),
+                  bills_with_months AS (
+                      -- Select all bills which have due dates which correspond with a date from the series above
+                      -- and join against any existing payment information from the months table
+                      SELECT
+                           d.date,
+                           b.*
+                      FROM dates d
+                      INNER JOIN bills b ON
+                          ((EXTRACT(MONTH FROM age(d.date, b.startdate)) % 12 = 0) AND (EXTRACT(DAY FROM b.startdate) = d.dom) AND b.period = 7 AND (b.enddate IS NULL OR b.enddate >= d.date)) OR
+                          ((EXTRACT(MONTH FROM age(d.date, b.startdate)) % 6 = 0) AND (EXTRACT(DAY FROM b.startdate) = d.dom) AND b.period = 6 AND (b.enddate IS NULL OR b.enddate >= d.date)) OR
+                          ((EXTRACT(MONTH FROM age(d.date, b.startdate)) % 3 = 0) AND (EXTRACT(DAY FROM b.startdate) = d.dom) AND b.period = 5 AND (b.enddate IS NULL OR b.enddate >= d.date)) OR
+                          (EXTRACT(DAY FROM b.startdate) = d.dom AND b.period = 4 AND (b.enddate IS NULL OR b.enddate >= d.date)) OR
+                          (((EXTRACT(WEEK FROM b.startdate) % 2) = (d.week % 2)) AND (EXTRACT(ISODOW FROM b.startdate) = d.dow) AND b.period = 2 AND (b.enddate IS NULL OR b.enddate >= d.date)) OR
+                          (EXTRACT(ISODOW FROM b.startdate) = d.dow AND b.period = 1 AND (b.enddate IS NULL OR b.enddate >= d.date)) OR
+                          (b.startdate = d.date AND b.period = 0)
+                      GROUP BY b.id, d.date
+                  ),
+                  incomes AS (
+                      -- Select all income sources which have due dates which correspond with a date from the
+                      -- series above
+                      SELECT
+                          d.date,
+                          i.*
+                      FROM dates d
+                      INNER JOIN
+                            income i
+                      ON
+                          ((EXTRACT(MONTH FROM age(d.date, i.startdate)) % 12 = 0) AND (EXTRACT(DAY FROM i.startdate) = d.dom) AND i.period = 7 AND (i.enddate IS NULL OR i.enddate >= d.date)) OR
+                          ((EXTRACT(MONTH FROM age(d.date, i.startdate)) % 6 = 0) AND (EXTRACT(DAY FROM i.startdate) = d.dom) AND i.period = 6 AND (i.enddate IS NULL OR i.enddate >= d.date)) OR
+                          ((EXTRACT(MONTH FROM age(d.date, i.startdate)) % 3 = 0) AND (EXTRACT(DAY FROM i.startdate) = d.dom) AND i.period = 5 AND (i.enddate IS NULL OR i.enddate >= d.date)) OR
+                          (EXTRACT(DAY FROM i.startdate) = d.dom AND i.period = 4 AND (i.enddate IS NULL OR i.enddate >= d.date)) OR
+                          (((EXTRACT(WEEK FROM i.startdate) % 2) = (d.week % 2)) AND (EXTRACT(ISODOW FROM i.startdate) = d.dow) AND i.period = 2 AND (i.enddate IS NULL OR i.enddate >= d.date)) OR
+                          (EXTRACT(ISODOW FROM i.startdate) = d.dow AND i.period = 1 AND (i.enddate IS NULL OR i.enddate >= d.date)) OR
+                          (i.startdate = d.date AND i.period = 0)
+                      ORDER BY d.date ASC
+                  )
+                  SELECT
+                      -- Join together the bills and income using aggregate and JSON functions to build out a cashflow
+                      -- series
+                      CAST(json_build_object(
+                          'date', d.date,
+                          'balance', (SUM(COALESCE(i.amount, 0)) + ? - SUM(COALESCE(b.amount, 0))),
+                          'currency', 'USD',
+                          'expenditures', to_json(array_agg(b)),
+                          'income', to_json(array_agg(i))
+                      ) AS text) as daily_balance
+                  FROM
+                      dates d
+                  LEFT JOIN
+                      bills_with_months b
+                  ON
+                      b.date = d.date
+                  LEFT JOIN
+                      incomes i
+                  ON
+                      i.date = d.date
+                  GROUP BY d.date, b.id, i.id
+                  ORDER BY d.date ASC
+                """
+              ),
+              @javax.persistence.NamedNativeQuery(
+                name = "getBillsForPeriod",
+                query = """
+                  WITH days_in_period AS (
+                      SELECT CAST(generate_series(CAST(? AS date), CAST(? AS date), CAST('1 day' AS interval)) AS date) as date
+                  ),
+                   dates AS (
+                       SELECT
+                           EXTRACT(ISODOW FROM d.date) AS dow,
+                           EXTRACT(DAY FROM d.date) AS dom,
+                           EXTRACT(WEEK FROM d.date) AS week,
+                           EXTRACT(MONTH FROM d.date) AS month,
+                           EXTRACT(YEAR FROM d.date) AS year,
+                           d.date
+                       FROM days_in_period d
+                  ),
+                  bills_with_months AS (
+                      SELECT
+                          b.*,
+                          array_agg(
+                              json_build_object(
+                                  'id', m.id,
+                                  'bill_id', COALESCE(m.bill_id, b.id),
+                                  'day', COALESCE(m.day, d.dom),
+                                  'month', coalesce(m.month, d.month),
+                                  'year', coalesce(m.year, d.year),
+                                  'paid', coalesce(m.paid, false)
+                              )
+                          ) AS months
+                      FROM dates d
+                               INNER JOIN bills b ON
+                              ((EXTRACT(MONTH FROM age(d.date, b.startdate)) % 12 = 0) AND (EXTRACT(DAY FROM b.startdate) = d.dom) AND b.period = 7 AND (b.enddate IS NULL OR b.enddate >= d.date)) OR
+                              ((EXTRACT(MONTH FROM age(d.date, b.startdate)) % 6 = 0) AND (EXTRACT(DAY FROM b.startdate) = d.dom) AND b.period = 6 AND (b.enddate IS NULL OR b.enddate >= d.date)) OR
+                              ((EXTRACT(MONTH FROM age(d.date, b.startdate)) % 3 = 0) AND (EXTRACT(DAY FROM b.startdate) = d.dom) AND b.period = 5 AND (b.enddate IS NULL OR b.enddate >= d.date)) OR
+                              (EXTRACT(DAY FROM b.startdate) = d.dom AND b.period = 4 AND (b.enddate IS NULL OR b.enddate >= d.date)) OR
+                              (((EXTRACT(WEEK FROM b.startdate) % 2) = (d.week % 2)) AND (EXTRACT(ISODOW FROM b.startdate) = d.dow) AND b.period = 2 AND (b.enddate IS NULL OR b.enddate >= d.date)) OR
+                              (EXTRACT(ISODOW FROM b.startdate) = d.dow AND b.period = 1 AND (b.enddate IS NULL OR b.enddate >= d.date)) OR
+                              (b.startdate = d.date AND b.period = 0)
+                      LEFT JOIN
+                           months m
+                      ON
+                           m.bill_id = b.id AND
+                           m.day = d.dom AND
+                           m.month = d.month AND
+                           m.year = d.year
+                      GROUP BY b.id, m.bill_id
+                  )
+                  SELECT CAST(to_json(bwm) as text) as bill FROM bills_with_months bwm
+                """
+              )
+            })
       required:
         - id
         - name
@@ -477,83 +746,133 @@ components:
         - type: object
           properties:
             months:
+              description: The payment status of associated billing events
               type: array
               minItems: 10
               maxItems: 10
+              x-java-field-annotations:
+                - '@javax.persistence.OneToMany(cascade = javax.persistence.CascadeType.ALL, orphanRemoval = true, fetch = javax.persistence.FetchType.EAGER)'
+                - '@javax.persistence.JoinColumn(name = "bill_id")'
+                - '@javax.persistence.OrderBy("year,month,day")'
               items:
                 $ref: '#/components/schemas/Month'
     User:
       type: object
+      description: An object representing a user of this system
       properties:
         email:
           type: string
           format: email
+          description: The unique e-mail address of this user
         name:
           type: string
+          description: The full name of the user represented
       additionalProperties: true
     NewIncome:
       type: object
+      description: An object representing a newly created Income instance which has not yet been persisted and thus it does not have a unique ID required
       required:
       - name
       - amount
       properties:
         id:
           type: string
+          description: The unique ID which gets assigned upon being persisted
           format: uuid
+          x-java-field-annotations:
+            - '@javax.persistence.Id'
+            - '@javax.persistence.GeneratedValue(generator = "UUID")'
+            - '@org.hibernate.annotations.GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")'
+            - '@javax.persistence.Column(name = "id", updatable = false, nullable = false)'
         name:
           type: string
+          description: The human readable name of this Income source
         amount:
           type: number
+          description: The approximate amount of the income
           multipleOf: 0.01
           minimum: 0.00
         period:
-          type: string
-          enum:
-          - once
-          - weekly
-          - biweekly
-          - semimonthly
-          - monthly
-          - quarterly
-          - semianually
-          - annually
-          default: biweekly
+          $ref: '#/components/schemas/Period'
         start_date:
+          x-java-field-annotations:
+            - '@javax.persistence.Column(name = "startdate")'
           type: string
+          description: The date on which this Income source starts being included in cashflow calculations
           format: date
         end_date:
+          x-java-field-annotations:
+            - '@javax.persistence.Column(name = "enddate")'
           type: string
+          description: The date on which this Income source stops being included in cashflow calculations
           format: date
         currency:
-          type: string
-          enum:
-          - 'USD'
-          - 'GBP'
-          - 'EUR'
-          default: 'USD'
+          $ref: '#/components/schemas/Currency'
     Income:
       type: object
+      description: An Income object with a required unique identifier that has been persisted
+      x-java-class-annotations:
+        - '@javax.persistence.Entity'
+        - '@javax.persistence.Table(name = "income")'
+        - >-
+            @javax.persistence.NamedNativeQuery(
+              name = "getIncomeForPeriod",
+              resultClass = Income.class,
+              query = """
+              WITH days_in_period AS (
+                  SELECT CAST(generate_series(CAST(? AS date), CAST(? AS date), CAST('1 day' AS interval)) AS date) as date
+              ),
+                   dates AS (
+                       SELECT
+                           EXTRACT(ISODOW FROM d.date) AS dow,
+                           EXTRACT(DAY FROM d.date) AS dom,
+                           EXTRACT(WEEK FROM d.date) AS week,
+                           EXTRACT(MONTH FROM d.date) AS month,
+                           d.date
+                       FROM days_in_period d
+                   )
+              SELECT
+                  i.*
+              FROM dates d
+              INNER JOIN income i
+              ON
+                  ((EXTRACT(MONTH FROM age(d.date, i.startdate)) % 12 = 0) AND (EXTRACT(DAY FROM i.startdate) = d.dom) AND i.period = 7 AND (i.enddate IS NULL OR i.enddate >= d.date)) OR
+                  ((EXTRACT(MONTH FROM age(d.date, i.startdate)) % 6 = 0) AND (EXTRACT(DAY FROM i.startdate) = d.dom) AND i.period = 6 AND (i.enddate IS NULL OR i.enddate >= d.date)) OR
+                  ((EXTRACT(MONTH FROM age(d.date, i.startdate)) % 3 = 0) AND (EXTRACT(DAY FROM i.startdate) = d.dom) AND i.period = 5 AND (i.enddate IS NULL OR i.enddate >= d.date)) OR
+                  (EXTRACT(DAY FROM i.startdate) = d.dom AND i.period = 4 AND (i.enddate IS NULL OR i.enddate >= d.date)) OR
+                  (((EXTRACT(WEEK FROM i.startdate) % 2) = (d.week % 2)) AND (EXTRACT(ISODOW FROM i.startdate) = d.dow) AND i.period = 2 AND (i.enddate IS NULL OR i.enddate >= d.date)) OR
+                  (EXTRACT(ISODOW FROM i.startdate) = d.dow AND i.period = 1 AND (i.enddate IS NULL OR i.enddate >= d.date)) OR
+                  (i.startdate = d.date AND i.period = 0)
+              ORDER BY d.date ASC""")
       required:
       - id
       allOf:
         - $ref: '#/components/schemas/NewIncome'
     DailyBalance:
       type: object
+      description: When the Cashflow is requested, an array of these objects represent the net increase/descrease of available cash for a given day
       required:
       - date
       - balance
+      - currency
       properties:
         date:
           type: string
           format: date
+          description: The date for this balance value
         balance:
           type: number
           multipleOf: 0.01
+          description: The computed balance based on starting balance, income, and bills due
+        currency:
+          $ref: '#/components/schemas/Currency'
         income:
           type: array
+          description: A list of the Income items which apply on this date
           items:
             $ref: '#/components/schemas/Income'
         expenditures:
           type: array
+          description: A list of the Bill items which apply on this date
           items:
             $ref: '#/components/schemas/Bill'

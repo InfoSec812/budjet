@@ -17,7 +17,7 @@ export const initState = (): State => ({
 // eslint-disable-next-line no-unused-vars
 const progressInit = (progress: LoadingBar): AxiosRequestConfig => {
   const axiosConfig = {} as AxiosRequestConfig;
-  
+
   progress.increment(10);
   axiosConfig.onUploadProgress = (progressEvent: ProgressEvent) => progress.increment(progressEvent.loaded * 80);
   progress.increment(20);
@@ -45,10 +45,12 @@ export const unifiedStore = defineStore('unified', {
       this.user = current;
     },
     async loadIncomes(
+      startDate?: string,
+      endDate?: string
                   ): Promise<void> {
       const axiosConfig = progressInit(this.q.loadingBar);
       try {
-        const { data } = await this.api.getIncomeSources(axiosConfig);
+        const { data } = await this.api.getIncomeSources(startDate, endDate, axiosConfig);
         this.updateIncomes(data);
       } catch (err) {
         this.q.notify({message: 'An error occurred loading Income items from the API', type: 'negative'});
