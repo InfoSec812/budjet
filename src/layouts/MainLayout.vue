@@ -32,25 +32,12 @@
   </q-layout>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref } from 'vue';
 
-import { defineComponent, ref } from 'vue';
+const leftDrawerOpen = ref(false);
 
-export default defineComponent({
-  name: 'MainLayout',
-
-  setup() {
-
-    const leftDrawerOpen = ref(false);
-
-    const toggleLeftDrawer = () => {
-      leftDrawerOpen.value = !leftDrawerOpen.value;
-    };
-
-    return {
-      leftDrawerOpen,
-      toggleLeftDrawer,
-    };
-  },
-});
+const toggleLeftDrawer = () => {
+  leftDrawerOpen.value = !leftDrawerOpen.value;
+};
 </script>
