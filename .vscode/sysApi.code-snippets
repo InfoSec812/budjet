@@ -174,7 +174,7 @@
   },
   "Bill update/delete": {
     "prefix": "dw006",
-	"body": [
+	  "body": [
         "/bill/{id}:",
         "  get:",
         "    operationId: getBill",
