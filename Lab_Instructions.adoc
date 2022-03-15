@@ -1,5 +1,6 @@
 = Accelerating Application Design With OpenAPI
 :source-highlighter: rouge
+:rouge-style: magritte
 :icons: font
 
 ## Getting The Tools
@@ -7,22 +8,39 @@
 Before you begin, you will need to ensure that your development environment is properly configured. To make that happen you will want certain tools installed and usable. Most of this tutorial will assume a UNIX-like environment (MacOS, Linux, WSL2).
 
 * Install http://www.nodejs.org/[NodeJS]
-* Install a https://adoptopenjdk.net/[Java Virtual Machine]
+* Install a https://adoptopenjdk.net/[Java Virtual Machine] >= 11 (Prefer 17)
 * Install https://www.npmjs.com/package/yarn[Yarn]
 
 ## Bootstrap Your Project
 
-* Install Vue CLI
-** `yarn global add @vue/cli@latest`
+* Install Quasar CLI
+** `yarn global add @quasar/cli@latest`
+
+<<<
+
 * Create your new project. We will be creating a household bills manager and cash flow analyzer
-** `vue create todo-quasar-openapi`
+** `quasar create todo-quasar-openapi`
+
+[cols="2*"]
+|===
+a|
+image:quasar-cli-screenshot.png[CLI Screenshot,320,190,float="right",align="center"]
+a|
+Choose:
+
+* Sass with indented syntax
+* ESLint & Typescript
+* Composition API
+* Prettier
+* Yes, use Yarn
+|===
+
 * Change to the new project directory
 ** `cd todo-quasar-openapi`
-* Add Quasar
-** `vue add quasar`
 * Add Dev dependencies
-** `yarn add -D @openapitools/openapi-generator-cli @stoplight/prism npm-watch`
+** `yarn add -D rimraf @openapitools/openapi-generator-cli @stoplight/prism-cli npm-watch`
 * Create a basic OpenAPI contract
+** In the root of your new project, add the following to `openapi.yml`
 
 [source,yaml]
 ----
@@ -91,13 +109,14 @@ TIP: This is a reasonable start for any new REST API contract
 
 <<<
 
-* Add new scripts to `package.json`
+* Add new items to the `scripts` block in `package.json`
 
 [source,json]
 ----
+"dev": "quasar dev",
 "watch": "npm-watch",
 "prism": "prism mock -d --cors -p 7080 openapi.yml",
-"openapi": "rm -f src/sdk; mkdir src/sdk; openapi-generator-cli generate -g typescript-axios -i openapi.yml -o src/sdk/ -p withSeparateModelsAndApi=true,apiPackage=api,modelPackage=models"
+"openapi": "rimraf src/sdk; mkdir src/sdk; openapi-generator-cli generate -g typescript-axios -i openapi.yml -o src/sdk/ -p withSeparateModelsAndApi=true,apiPackage=api,modelPackage=models"
 ----
 
 //
@@ -115,7 +134,7 @@ TIP: This is a reasonable start for any new REST API contract
     "inherit": true
   },
   "prism": true,      <2>
-  "serve": {
+  "dev": {
     "patterns": [     <3>
       "yarn.lock",
       "package.json",
@@ -129,9 +148,11 @@ TIP: This is a reasonable start for any new REST API contract
   }
 },
 ----
-<1> When either `openapi.yml` or `package.json` change, regenerate the OpenAPI Client code
-<2> Ensure that the `prism` mock API server is running. It will automatically detect changes in the OpenAPI file.
+<1> When either `openapi.yml` or `package.json` change, https://openapi-generator.tech/docs/generators/typescript-axios[regenerate the OpenAPI Client] code
+<2> Ensure that the `prism` https://github.com/stoplightio/prism[mock API server] is running. It will automatically detect changes in the OpenAPI file.
 <3> When any of the core framework files change, restart the development web server
+
+<<<
 
 [IMPORTANT]
 What did I just accomplish?
@@ -148,38 +169,57 @@ These are IDE's I have had good luck with
 * https://code.visualstudio.com/[VSCode]
 * https://www.jetbrains.com/webstorm/[WebStorm]
 
-### Clean Up Some Template Issues
+## Clean Up Some Boilerplate
 
-* Rename `src/quasar-user-options.js` to `src/quasar-user-options.ts` to eliminate TypeScript validation errors
-* Replace `<HelloWorld />` with `<router-view />` in `src/App.vue` and remove all other references to `HelloWorld` in that file. (It is handled in a different component now)
-* Add a type interface to `App.vue` and use it for the `setup()` function:
+* Delete the files:
+** `src/components/CompositionComponent.vue`
+** `src/components/EssentialLink.vue`
+** `src/components/models.ts`
+* Replace the contents of `src/pages/Index.vue`
 
-[source,html]
+[source]
 ----
 <template>
-  <q-layout view="hHh lpR fFf">
-    <q-header elevated style="height: 5vh;">
+  <q-page class="row items-center justify-evenly"> </q-page>
+</template>
+
+<script setup lang="ts"></script>
+----
+
+<<<
+
+* Replace the contents of `src/layouts/MainLayout.vue`
+
+[source]
+----
+<template>
+  <q-layout view="lHh Lpr lFf">
+    <q-header elevated>
       <q-toolbar>
-        <q-toolbar-title>
-          Todo List
-        </q-toolbar-title>
+        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+        <q-toolbar-title> Quasar App </q-toolbar-title>
+        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
-    <q-page-container style="height: 100%;">
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+      <q-list> </q-list>
+    </q-drawer>
+    <q-page-container>
       <router-view />
     </q-page-container>
   </q-layout>
 </template>
-<script lang="ts">
-import { defineComponent, ref } from "vue";
 
-export default defineComponent(() => {
-  return {
-    leftDrawerOpen: ref(false),
-  }
-});
+<script setup lang="ts">
+import { ref } from "vue";
+
+const leftDrawerOpen = ref(false);
+
+const toggleLeftDrawer = () => (leftDrawerOpen.value = !leftDrawerOpen.value);
 </script>
 ----
+
+<<<
 
 ## Start Building Todo User Interface
 
@@ -256,73 +296,21 @@ paths:
 
 [source,bash]
 ----
-❯ yarn watch
-yarn run v1.22.17
-warning ../package.json: No license field
-$ npm-watch
-No task specified. Will go through all possible tasks
-[nodemon] 2.0.15
-[nodemon] to restart at any time, enter `rs`
-[nodemon] watching path(s): yarn.lock package.json src/main.ts src/quasar-user-options.ts tsconfig.json vue.config.js babel.config.js
-[nodemon] watching extensions: js,mjs,json
-[nodemon] starting `npm run -s serve`
-[nodemon] 2.0.15
-[nodemon] 2.0.15
-[nodemon] to restart at any time, enter `rs`
-[nodemon] to restart at any time, enter `rs`
-[nodemon] watching path(s): openapi.yml
-[nodemon] watching extensions: js,mjs,json
-[nodemon] watching path(s): openapi.yml package.json
-[nodemon] starting `npm run -s prism`
-[nodemon] watching extensions: js,mjs,json
-[nodemon] starting `npm run -s openapi`
-rm: cannot remove 'src/sdk': Is a directory
-mkdir: cannot create directory ‘src/sdk’: File exists
- INFO  Starting development server...
-[3:43:15 PM] › [CLI] …  awaiting  Starting Prism…
-[3:43:15 PM] › [CLI] ℹ  info      GET        http://127.0.0.1:7080/todos
-[3:43:15 PM] › [CLI] ℹ  info      GET        http://127.0.0.1:7080/health
-[3:43:15 PM] › [CLI] ▶  start     Prism is listening on http://127.0.0.1:7080
-[main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
-[main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: typescript-fetch (client)
-[main] INFO  o.o.codegen.DefaultGenerator - Generator 'typescript-fetch' is considered stable.
-[main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Hint: Environment variable 'TS_POST_PROCESS_FILE' (optional) not defined. E.g. to format the source code, please try 'export TS_POST_PROCESS_FILE="/usr/local/bin/prettier --write"' (Linux/Mac)
-[main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Note: To enable file post-processing, 'enablePostProcessFile' must be set to `true` (--enable-post-process-file for CLI).
-[main] INFO  o.o.codegen.utils.ModelUtils - [deprecated] inheritance without use of 'discriminator.propertyName' has been deprecated in the 5.x release. Composed schema name: null. Title: null
-[main] INFO  o.o.codegen.utils.ModelUtils - [deprecated] inheritance without use of 'discriminator.propertyName' has been deprecated in the 5.x release. Composed schema name: null. Title: null
-[main] INFO  o.o.codegen.TemplateManager - writing file /home/dphillips/Documents/RedHat/Workspace/todo-quasar-openapi/src/sdk/models/NewTodo.ts
-[main] INFO  o.o.codegen.TemplateManager - writing file /home/dphillips/Documents/RedHat/Workspace/todo-quasar-openapi/src/sdk/models/Todo.ts
-[main] INFO  o.o.codegen.utils.ModelUtils - [deprecated] inheritance without use of 'discriminator.propertyName' has been deprecated in the 5.x release. Composed schema name: null. Title: null
-[main] INFO  o.o.codegen.utils.ModelUtils - [deprecated] inheritance without use of 'discriminator.propertyName' has been deprecated in the 5.x release. Composed schema name: null. Title: null
-[main] INFO  o.o.codegen.TemplateManager - writing file /home/dphillips/Documents/RedHat/Workspace/todo-quasar-openapi/src/sdk/apis/DefaultApi.ts
-[main] INFO  o.o.codegen.TemplateManager - writing file /home/dphillips/Documents/RedHat/Workspace/todo-quasar-openapi/src/sdk/apis/TodoApi.ts
-[main] INFO  o.o.codegen.TemplateManager - writing file /home/dphillips/Documents/RedHat/Workspace/todo-quasar-openapi/src/sdk/index.ts
-[main] INFO  o.o.codegen.TemplateManager - writing file /home/dphillips/Documents/RedHat/Workspace/todo-quasar-openapi/src/sdk/runtime.ts
-[main] INFO  o.o.codegen.TemplateManager - writing file /home/dphillips/Documents/RedHat/Workspace/todo-quasar-openapi/src/sdk/apis/index.ts
-[main] INFO  o.o.codegen.TemplateManager - writing file /home/dphillips/Documents/RedHat/Workspace/todo-quasar-openapi/src/sdk/models/index.ts
-[main] INFO  o.o.codegen.TemplateManager - Skipped /home/dphillips/Documents/RedHat/Workspace/todo-quasar-openapi/src/sdk/.openapi-generator-ignore (Skipped by supportingFiles options supplied by user.)
-[main] INFO  o.o.codegen.TemplateManager - writing file /home/dphillips/Documents/RedHat/Workspace/todo-quasar-openapi/src/sdk/.openapi-generator/VERSION
-[main] INFO  o.o.codegen.TemplateManager - writing file /home/dphillips/Documents/RedHat/Workspace/todo-quasar-openapi/src/sdk/.openapi-generator/FILES
-################################################################################
-# Thanks for using OpenAPI Generator.                                          #
-# Please consider donation to help us maintain this project 🙏                 #
-# https://opencollective.com/openapi_generator/donate                          #
-################################################################################
-[nodemon] clean exit - waiting for changes before restart
-98% after emitting SizeLimitsPlugin
+$ yarn watch
+SNIP...
 
 DONE  Compiled successfully in 5779ms
 ----
 
 [NOTE]
-*What is happening here?
+What is happening here?
 ====
 By defining the `NewTodo` and `Todo` schemas along with the `/todo` **GET** operation in the `openapi.yml` file and starting the watch, prism and openapi-generator start up the mock API server and generate the client-side code for talking to the API. The API client code can be found in `src/sdk` and we will use it to talk to the mock API as we develop the user interface application.
 ====
 
 ## Create State Management For The Application With Pinia
 
-https://pinia.esm.dev/[Pinia] is a state management extension for VueJS and it offers a way of reducing trashing and complexity by allowing you to centrally manage the state information in your web application. In this application, we will use it to make integration with our API simpler and more efficient.
+https://pinia.esm.dev/[Pinia] is a state management extension for VueJS and it offers a way of reducing thrashing and complexity by allowing you to centrally manage the state information in your web application. In this application, we will use it to make integration with our API simpler and more efficient.
 
 //
 
@@ -335,7 +323,7 @@ https://pinia.esm.dev/[Pinia] is a state management extension for VueJS and it o
 
 [source,typescript]
 ----
-import { Configuration } from './../sdk/runtime';
+import { Configuration } from './../sdk/configuration';
 import { PiniaPluginContext } from "pinia";
 
 declare module 'pinia' {
@@ -395,22 +383,56 @@ the API client on load
 
 //
 
-- Initialize Pinia in the `src/main.ts` file of the Vue application
+* Initialize Pinia by creating a Quasar boot file:
+** `quasar new boot pinia -f ts`
+** Edit `src/boot/pinia.ts` to match the code below:
 
-[source#main.ts,typescript]
+[source#src/boot/pinia.ts,typescript]
 ----
-import { createPinia } from 'pinia'
-import { APIPlugin } from './stores/APIPlugin';
+import { boot } from 'quasar/wrappers';
+import { createPinia } from 'pinia';
+import { APIPlugin } from 'src/stores/APIPlugin';
 
-const pinia = createPinia();
-pinia.use((context) => APIPlugin(context));
-
-createApp(App)
-    .use(Quasar, quasarUserOptions)
-    .use(router)
-    .use(pinia)
-    .mount('#app')
+export default boot(({ app }) => {
+  const pinia = createPinia();
+  pinia.use((context) => APIPlugin(context));
+  app.use(pinia);
+});
 ----
+
+** Enable the `pinia` boot file in `<root>/quasar.conf.js`
+
+[source,javascript,highlight=21..23]
+----
+const { configure } = require('quasar/wrappers');
+
+module.exports = configure(function (ctx) {
+  return {
+    // https://quasar.dev/quasar-cli/supporting-ts
+    supportTS: {
+      tsCheckerConfig: {
+        eslint: {
+          enabled: true,
+          files: './src/**/*.{ts,tsx,js,jsx,vue}',
+        },
+      },
+    },
+
+    // https://quasar.dev/quasar-cli/prefetch-feature
+    // preFetch: true,
+
+    // app boot file (/src/boot)
+    // --> boot files are part of "main.js"
+    // https://quasar.dev/quasar-cli/boot-files
+    boot: [
+      'pinia'
+    ],
+    // .. SNIP ..
+  }
+}
+----
+
+<<<
 
 ## Create Our First Pinia Store
 
@@ -427,6 +449,8 @@ interface State {
 }
 ----
 
+<<<
+
 * Now, let's define our Todos store:
 
 [source,typescript]
@@ -435,33 +459,33 @@ import { Todo } from '@/sdk';
 import { defineStore } from 'pinia';
 
 interface State {
-    todos: Todo[]
+  todos: Todo[]
 }
 
-export const initState = (): TodoState => ({    // <1>
-    todos: [],
+export const initState = (): State => ({  // <1>
+  todos: [],
 });
 
 export const todoStore = defineStore('todos', {
-    state: initState,
+  state: initState,
 
-    getters: {
-        todoList: (state) => state?.todos       // <2>
+  getters: {
+    todoList: (state) => state?.todos     // <2>
+  },
+
+  actions: {
+    async loadTodos() {                   // <3>
+      try {
+        const { data } = await this.todoApi.getAllTodos();
+        this.updateTodos(data);
+      } catch (err) {
+        // Do something with the error?
+      }
     },
-
-    actions: {
-        async loadTodos() {                     // <3>
-            try {
-                const { data } = await this.todoApi.getAllTodos();
-                this.updateTodos(data);
-            } catch (err) {
-                // Do something with the error?
-            }
-        },
-        updateTodos(todos: Todo[]) {            // <4>
-            this.todos = todos;
-        }
+    updateTodos(todos: Todo[]) {          // <4>
+      this.todos = todos;
     }
+  }
 });
 ----
 <1> Initialize the State object with it's default values (an empty array)
@@ -469,63 +493,62 @@ export const todoStore = defineStore('todos', {
 <3> Create an action which uses our API client code to load Todos from the REST service
 <4> Create another method which applies the todos to the state once our Async method completes
 
-//
+// 
 
-* Let's use that newly created store in our `Home.vue` view
+// 
+
+* Now, let's use that newly created store in our `Index.vue` view
 
 <<<
 
 ## Use Our First API Call
 
-* Open the `src/views/Home.vue` file and set the template as follows:
+* Open the `src/pages/Index.vue` file and set the template as follows:
 
-[source,html]
+[source]
 ----
 <template>
-  <div class="flex q-pa-md" style="margin: 0;">
-    <div :class="headerClasses">
-      <div class="col-grow">
+  <q-page class="flex q-pa-md">
+    <div class="fit row wrap justify-start items-start content-start">
+      <div class="col-grow title">
         Title/Description
-        <q-btn icon="refresh" dense flat @click="reload" />
+        <q-btn @click="todos.loadTodos" flat dense icon="refresh" />
+      </div>
+      <div class="col-1 title">
+        Done?
       </div>
     </div>
-    <q-scroll-area style="height: 82vh; width: 100vw;">
-      <q-list>
-        <q-item v-for="todo in todoList" :key="todo.id" class="row datatable">
-          <q-item-section class="col-grow">
-            <q-expansion-item :label="todo.title">
-            <template v-slot:header>
-              <span class="title">{{ todo.title }}</span>
-            </template>
-            <template v-slot:default>
-              <span class="description">{{ todo.description }}</span>
-            </template>
-            </q-expansion-item>
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </q-scroll-area>
+    <div
+      v-for="todo in todoList"
+      :key="todo.id"
+      class="content fit row wrap justify-start items-start content-start"
+    >
+      <div class="col-grow q-gutter-xs">
+        <q-expansion-item :label="todo.title">
+          {{ todo.description }}
+        </q-expansion-item>
+      </div>
+      <div class="col-1 q-gutter-xs">
+        <q-checkbox :model-value="todo.complete" />
+      </div>
+    </div>
+  </q-page>
 </template>
 ----
-
-<<<
 
 * Add the following code to the `<script>` block
 
 [source,typescript]
 ----
-import { todoStore } from "@/stores/TodoStore"
-import { computed, defineComponent } from "vue";
+import { todoStore } from '../stores/TodoStore';
+import { computed, onBeforeMount } from 'vue';
+const todos = todoStore();
 
-export default defineComponent(() => {
-  const todos = todoStore();                  // <1>
+const todoList = computed(() => todos.todoList);
 
-  todos.loadTodos();                          // <2>
-
-  return {
-    todoList: computed(() => todos.todoList)  // <3>
-  }
-})
+onBeforeMount(async () => {
+  await todos.loadTodos();
+});
 ----
 <1> Instantiate our Pinia store
 <2> Load the Todo items from the API service
@@ -538,40 +561,15 @@ export default defineComponent(() => {
 [source,html]
 ----
 <style lang="sass" scoped>
-.header
-  font-size: 2.6vh
-  font-weight: 800
-  text-decoration: underline
-  height: 3vh
-  width: 100%
-
-.scroll-area
-  position: relative
-  top: 3vh
-  width: 100vw
-  min-height: 87vh
-  box-sizing: content-box
-
-.datatable
-  padding: 0px !important
-  &:nth-child(odd)
-    background-color: rgba(2,123,227,0.07)
-
-.small-cell
-  min-width: 2rem
-  max-width: 2rem
-  flex-direction: column
-  justify-content: flex-start
-  margin: 0px
-  margin-top: 0.5rem
-  padding: 0px
+div.content:nth-child(odd)
+  background-color: rgba(2,123,227,0.07)
 
 .title
   font-weight: 700
-  font-size: 1.2rem
+  font-size: 1rem
 
-.description
-  padding-left: 2rem
+div.col-1
+  max-width: 3.5rem
 </style>
 ----
 
