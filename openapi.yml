@@ -420,7 +420,7 @@ paths:
                   $ref: '#/components/schemas/DailyBalance'
         default:
           $ref: '#/components/responses/Error'
-        
+
   /health:
     get:
       description: Check the health of the API Server
@@ -557,6 +557,9 @@ components:
             - '@javax.persistence.Column(name = "id", updatable = false, nullable = false)'
         name:
           type: string
+          x-faker:
+            company.companyName:
+              - 1
           description: The human readable name of this Bill
         amount:
           type: number
@@ -766,6 +769,7 @@ components:
           description: The unique e-mail address of this user
         name:
           type: string
+          x-faker: name.findName
           description: The full name of the user represented
       additionalProperties: true
     NewIncome:
@@ -786,6 +790,9 @@ components:
             - '@javax.persistence.Column(name = "id", updatable = false, nullable = false)'
         name:
           type: string
+          x-faker:
+            company.companyName:
+              - 1
           description: The human readable name of this Income source
         amount:
           type: number
