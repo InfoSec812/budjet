@@ -58,11 +58,13 @@ servers:
           - '7080'
         default: '7080'
 tags:
-  - name: api
+  - name: todo
 paths:
   /health:
     get:
       operationId: getHealth
+      tags:
+        - todo
       responses:
         '200':
           description: 'OK'
