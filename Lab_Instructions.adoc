@@ -142,7 +142,7 @@ TIP: This is a reasonable start for any new REST API contract
 [IMPORTANT]
 What did I just accomplish?
 ====
-You have just created a new project using the https://quasar.dev/[Quasar] framework for https://v3.vuejs.org/[VueJS]. You also added tooling which will allow you to both create a Mock API server (using Prism) but also generate the code which allows you to talk to that API automatically. As we proceed, you will see that when we need a new data type or new API method, we can quickly add it to the `openapi.yml` file and the `npm-watch` tool will automatically regenerate the necessary code and restart the necessary services.
+You have just created a new project using the https://quasar.dev/[Quasar] framework for https://v3.vuejs.org/[VueJS]. You also added tooling which will allow you to create both a Mock API server (using Prism) but also generate the code which allows you to talk to that API automatically (using OpenAPI Generator). As we proceed, you will see that when we need a new data type or new API method, we can quickly add it to the `openapi.yml` file and the `npm-watch` tool will automatically regenerate the necessary code and restart the necessary services.
 ====
 
 ## Open your project in your preferred IDE
@@ -151,6 +151,42 @@ These are IDE's I have had good luck with
 
 * https://code.visualstudio.com/[VSCode]
 * https://www.jetbrains.com/webstorm/[WebStorm]
+
+## Connect our API client code to Vue
+
+. From the command-line in your project directory, use the Quasar CLI to create a new [Boot]() file.
++
+[source,bash]
+----
+./node_modules/.bin/quasar new boot --format=ts api
+----
+
+. Fill in the logic of the boot file to be able to *provide* the API whenever it is injected.
++
+[source,typescript]
+----
+import { boot } from 'quasar/wrappers';
+import { TodoApi, Configuration } from '../sdk';
+
+export default boot((app) => {
+  const config = new Configuration();
+  const api = new TodoApi(config);
+  app.app.provide('api', api);
+});
+----
+
+. Add the new boot file to the Quasar project by editing `quasar.conf.js` and adding 'api' to the `boot` array.
++
+[source,javascript]
+----
+// app boot file (/src/boot)
+// --> boot files are part of "main.js"
+// https://v2.quasar.dev/quasar-cli-vite/boot-files
+boot: [
+  'api',  // Add 'api' here.
+  'axios',
+],
+----
 
 ## Start Building Todo User Interface
 
