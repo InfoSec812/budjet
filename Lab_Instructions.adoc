@@ -188,6 +188,8 @@ boot: [
 ],
 ----
 
+<<<
+
 ## Start Building Todo User Interface
 
 * We know that we're going to need a Todo object type, so let's create that in the `openapi.yml`
@@ -259,8 +261,14 @@ paths:
 
 * Once we add these, save the file and start our `watch` script
 
-[source,bash]
+[source]
 ----
+❯ npm run watch
+
+> codepalousa-todo@0.0.1 watch
+> npm-watch
+
+No task specified. Will go through all possible tasks
 npm WARN deprecated har-validator@5.1.5: this library is no longer supported
 npm WARN deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
 npm WARN deprecated request@2.88.2: request has been deprecated, see https://github.com/request/request/issues/3142
@@ -339,7 +347,7 @@ Y88b.Y8b88P Y88b 888 888  888      X88 888  888 888
 ----
 
 [NOTE]
-*What is happening here?
+.*What is happening here?*
 ====
 By defining the `NewTodo` and `Todo` schemas along with the `/todo` **GET** operation in the `openapi.yml` file and starting the watch, prism and openapi-generator start up the mock API server and generate the client-side code for talking to the API. The API client code can be found in `src/sdk` and we will use it to talk to the mock API as we develop the user interface application.
 ====
