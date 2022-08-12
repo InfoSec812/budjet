@@ -22,7 +22,7 @@ This will ensure that any projects you create starting in that directory will us
 
 ## Bootstrap Your Project
 
-* Create your new project. We will be creating a household bills manager and cash flow analyzer
+* Create your new project. We will be creating a simple Todo list application
 ** `npm init quasar`
 * Change to the new project directory
 ** `cd todo-quasar-openapi`
