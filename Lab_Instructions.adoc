@@ -106,9 +106,12 @@ TIP: This is a reasonable start for any new REST API contract
 
 [source,json]
 ----
+"start": "quasar dev",
+"build": "quasar build",
 "watch": "npm-watch",
 "prism": "prism mock -d --cors -p 7080 openapi.yml",
 "openapi": "openapi-generator-cli generate -g typescript-axios -i openapi.yml -o src/sdk/ -p withSeparateModelsAndApi=true,apiPackage=api,modelPackage=models"
+  
 ----
 
 //
@@ -117,25 +120,24 @@ TIP: This is a reasonable start for any new REST API contract
 
 [source,json]
 ----
-"watch": {
-  "openapi": {
-    "patterns": [     <1>
-      "openapi.yml",
-      "package.json"
-    ],
-    "inherit": true
+ "watch": {
+    "openapi": {
+      "patterns": [
+        "openapi.yml",
+        "package.json"
+      ],
+      "inherit": true
+    },
+    "start": {
+      "inherit": true,
+      "patterns": [
+        "package.json",
+        "quasar.conf.js",
+        "yarn.lock"
+      ]
+    },
+    "prism": true
   },
-  "prism": true,      <2>
-  "serve": {
-    "patterns": [     <3>
-      "package-lock.json",
-      "package.json",
-      "tsconfig.json",
-      "quasar.config.js"
-    ],
-    "inherit": true
-  }
-},
 ----
 <1> When either `openapi.yml` or `package.json` change, regenerate the OpenAPI Client code
 <2> Ensure that the `prism` mock API server is running. It will automatically detect changes in the OpenAPI file.
@@ -177,7 +179,7 @@ export default boot((app) => {
 });
 ----
 
-. Add the new boot file to the Quasar project by editing `quasar.conf.js` and adding 'api' to the `boot` array.
+. Add the new boot file to the Quasar project by editing `quasar.config.js` and adding 'api' to the `boot` array.
 +
 [source,javascript]
 ----
