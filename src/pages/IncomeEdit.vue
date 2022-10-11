@@ -158,7 +158,7 @@ export default defineComponent({
     });
 
     const isNotOnce = computed((): boolean => {
-      return (currentIncome.value.period !== NewIncomePeriodEnum.Once);
+      return (currentIncome.value.period !== Period.Once);
     });
 
     return {
