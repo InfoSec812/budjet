@@ -36,7 +36,8 @@
     "quasar": "^2.0.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0",
-    "lodash.throttle": "4.1.1"
+    "lodash.throttle": "4.1.1",
+    "lodash.difference": "4.5.0"
   
   },
   "devDependencies": {
