@@ -25,7 +25,7 @@
       "patterns": [
         "package.json",
         "quasar.conf.js",
-        "yarn.lock"
+        "package-lock.json"
       ]
     }
   },
