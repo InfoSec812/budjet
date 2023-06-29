@@ -1,9 +1,9 @@
 ---
 openapi: 3.0.2
 info:
-  title: My App
+  title: Budjet
   version: 1.0.0
-  description: My Application
+  description: Personal Budget Tracker
 servers:
   - url: "{proto}://{domain}:{port}{base_path}"
     description: "API URL"
@@ -67,9 +67,10 @@ paths:
             application/json:
               schema:
                 type: array
+                minItems: 5
+                maxItems: 20
                 items:
                   $ref: '#/components/schemas/Bill'
-                minItems: 0
         default:
           $ref: '#/components/responses/Error'
       parameters:
@@ -129,7 +130,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Bill'
+                type: array
+                minItems: 5
+                maxItems: 20
+                items:
+                  $ref: '#/components/schemas/Bill'
         default:
           $ref: '#/components/responses/Error'
   /bill/{id}:
@@ -279,6 +284,8 @@ paths:
             application/json:
               schema:
                 type: array
+                minItems: 5
+                maxItems: 20
                 items:
                   $ref: '#/components/schemas/Income'
         default:
@@ -416,6 +423,8 @@ paths:
             application/json:
               schema:
                 type: array
+                minItems: 5
+                maxItems: 20
                 items:
                   $ref: '#/components/schemas/DailyBalance'
         default:
