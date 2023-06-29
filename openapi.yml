@@ -137,7 +137,7 @@ paths:
                   $ref: '#/components/schemas/Bill'
         default:
           $ref: '#/components/responses/Error'
-  /bill/{id}:
+  /bills/{id}:
     get:
       operationId: getBill
       x-vertx-event-bus: budjet.bills
@@ -205,7 +205,7 @@ paths:
         schema:
           type: string
           format: uuid
-  /bill/{id}/{year}/{month}:
+  /bills/{id}/{year}/{month}:
     put:
       description: Update the paid status for a given month/year for a given bill ID
       summary: Update the paid status for a given month/year for a given bill ID
